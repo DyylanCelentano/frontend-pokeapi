@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:8000/api';
+export const API_URL = 'https://backend-pokeapi-u5so.onrender.com/api';
 export const TIPOS = {
 	normal: 1,
 	lucha: 2,

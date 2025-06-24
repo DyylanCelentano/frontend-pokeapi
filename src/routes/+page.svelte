@@ -29,14 +29,12 @@
 <section class="py-12">
 	<div class="max-w-7xl mx-auto px-4">
 		<h2 class="text-3xl font-bold text-center mb-12 text-slate-800">¿Qué te gustaría hacer?</h2>
-
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+		<div class="flex flex-wrap justify-center gap-6 max-w-4xl mx-auto">
 			<!-- Contenedor acciones -->
 
-			{#each accionesRapidas as accion}
-				<a
+			{#each accionesRapidas as accion}				<a
 					href={accion.enlace}
-					class="bg-white rounded-xl p-6 text-center border border-slate-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group"
+					class="bg-white rounded-xl p-6 text-center border border-slate-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group w-64 flex-shrink-0"
 				>
 					<div class="text-5xl mb-4 block">
 						{accion.icono}

@@ -1,5 +1,6 @@
 <script>
 	import Typeahead from '$lib/components/Typeahead.svelte';
+	import { API_URL } from '$lib/constantes/index.js';
 
 	let { data } = $props();
 
@@ -415,9 +416,8 @@
 							<label for="pokemon-nuevo" class="block text-sm font-medium text-slate-700 mb-2">
 								Pokémon <span class="text-red-500">*</span>
 							</label>
-							<div id="pokemon-nuevo">
-								<Typeahead
-									endpoint="http://localhost:8000/api/pokemon"
+							<div id="pokemon-nuevo">								<Typeahead
+									endpoint="{API_URL}/pokemon/"
 									placeholder="Buscar Pokémon..."
 									on:select={(event) => {
 										idPokemonNuevo = event.detail.result.id;
@@ -509,9 +509,8 @@
 							<label for="movimiento-nuevo" class="block text-sm font-medium text-slate-700 mb-2">
 								Movimiento <span class="text-red-500">*</span>
 							</label>
-							<div id="movimiento-nuevo">
-								<Typeahead
-									endpoint="http://localhost:8000/api/movimientos"
+							<div id="movimiento-nuevo">								<Typeahead
+									endpoint="{API_URL}/movimientos/"
 									placeholder="Buscar movimiento..."
 									disabled={!integranteParaMovimiento}
 									on:select={(event) => {

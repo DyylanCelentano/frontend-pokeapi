@@ -1,9 +1,9 @@
 <script>
 	import { page } from '$app/stores';
+	import EmptyState from '$lib/components/EmptyState.svelte';
 	import EtiquetaTipo from '$lib/components/EtiquetaTipo.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import TarjetaPokemon from '$lib/components/TarjetaPokemon.svelte';
-	import EmptyState from '$lib/components/EmptyState.svelte';
 	import { NOMBRES_TIPOS } from '$lib/constantes';
 	import { showLoading } from '$lib/stores/loading.js';
 	import { onMount } from 'svelte';
@@ -32,7 +32,11 @@
 	};
 </script>
 
-<div class="min-h-screen bg-slate-50">
+<svelte:head>
+	<title>Pokémon - PokéAPI</title>
+</svelte:head>
+
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
 	<div class="max-w-7xl mx-auto px-4 py-8">
 		<!-- Encabezado de la página -->
 		<div class="text-center mb-8">

@@ -52,7 +52,11 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+<svelte:head>
+	<title>{data.movimiento.nombre} - Movimientos - PokéAPI</title>
+</svelte:head>
+
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 py-8">
 	<!-- Header con navegación -->
 	<div class="bg-white shadow-sm border-b">
 		<div class="max-w-7xl mx-auto px-4 py-4">

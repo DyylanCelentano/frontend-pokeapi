@@ -1,6 +1,6 @@
 <script>
-	import Typeahead from '$lib/components/Typeahead.svelte';
 	import EmptyState from '$lib/components/EmptyState.svelte';
+	import Typeahead from '$lib/components/Typeahead.svelte';
 	import { API_URL } from '$lib/constantes/index.js';
 	import { hideLoading, showLoading } from '$lib/stores/loading.js';
 	import { onMount } from 'svelte';
@@ -150,6 +150,10 @@
 		return true;
 	}
 </script>
+
+<svelte:head>
+	<title>{data.equipo.nombre} - Equipos - PokéAPI</title>
+</svelte:head>
 
 <div class="min-h-screen bg-slate-50 text-lg py-8">
 	<div class="max-w-7xl mx-auto px-4">

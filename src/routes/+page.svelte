@@ -26,6 +26,10 @@
 	];
 </script>
 
+<svelte:head>
+	<title>PokéAPI - Explorador de Pokémon</title>
+</svelte:head>
+
 <!-- Sección de acciones rápidas -->
 <section class="py-12">
 	<div class="max-w-7xl mx-auto px-4">

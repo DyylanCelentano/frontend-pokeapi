@@ -1,7 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
-	import Pagination from '$lib/components/Pagination.svelte';
 	import EmptyState from '$lib/components/EmptyState.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 	import { showLoading } from '$lib/stores/loading.js';
 	export let data;
 
@@ -35,6 +35,10 @@
 		// El loading se ocultará cuando la página se recargue
 	}
 </script>
+
+<svelte:head>
+	<title>Equipos - PokéAPI</title>
+</svelte:head>
 
 <div class="min-h-screen bg-slate-50 text-lg py-8">
 	<div class="max-w-7xl mx-auto px-4">

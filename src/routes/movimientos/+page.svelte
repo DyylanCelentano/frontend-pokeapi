@@ -1,6 +1,6 @@
 <script>
-	import Pagination from '$lib/components/Pagination.svelte';
 	import EmptyState from '$lib/components/EmptyState.svelte';
+	import Pagination from '$lib/components/Pagination.svelte';
 	import { showLoading } from '$lib/stores/loading.js';
 	export let data;
 	//lo busque y es la forma correcta de usar el data $props
@@ -26,6 +26,10 @@
 		window.location.href = `/movimientos/${movimientoId}`;
 	}
 </script>
+
+<svelte:head>
+	<title>Movimientos - PokéAPI</title>
+</svelte:head>
 
 <div class="min-h-screen bg-slate-50 text-lg py-8">
 	<div class="max-w-7xl mx-auto px-4">

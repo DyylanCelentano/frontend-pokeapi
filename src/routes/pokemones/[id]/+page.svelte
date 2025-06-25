@@ -92,7 +92,11 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+<svelte:head>
+	<title>{data.pokemon.nombre} - Pokémon - PokéAPI</title>
+</svelte:head>
+
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
 	<!-- Header con navegación -->
 	<div class="bg-white shadow-sm border-b">
 		<div class="max-w-7xl mx-auto px-4 py-4">

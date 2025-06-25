@@ -2,16 +2,59 @@ import { API_URL } from '$lib/constantes/index.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
-	const apiUrl = new URL(`${API_URL}/pokemon/${params.id}`);
-	const response = await fetch(apiUrl);
+	try {
+		const apiUrl = new URL(`${API_URL}/pokemon/${params.id}`);
+		const response = await fetch(apiUrl);
 
-	if (!response.ok) {
-		error(`Error ${response.status}, ${response.statusText}`);
+		if (!response.ok) {
+			if (response.status === 404) {
+				error(404, {
+					message: `No se encontró el Pokémon con ID ${params.id}`,
+					title: "Pokémon no encontrado",
+					icon: "🐾",
+					suggestions: [
+						"Verifica que el ID del Pokémon sea correcto",
+						"Los IDs válidos van del 1 al 1010",
+						"Prueba buscando por nombre en la lista de Pokémones"
+					]
+				});
+			}
+			error(response.status, {
+				message: "Hubo un problema al cargar la información del Pokémon",
+				title: "Error del servidor",
+				icon: "⚠️"
+			});
+		}
+
+		const pokemon = await response.json();
+
+		// Validar que tenga datos mínimos
+		if (!pokemon || !pokemon.nombre) {
+			error(500, {
+				message: "Los datos del Pokémon están incompletos",
+				title: "Error en los datos",
+				icon: "🔧"
+			});
+		}
+
+		return {
+			pokemon
+		};
+	} catch (err) {
+		if (err.status) {
+			// Re-lanzar errores de SvelteKit
+			throw err;
+		}
+		
+		// Error de red u otros errores
+		error(503, {
+			message: "No se pudo conectar con el servidor. Inténtalo más tarde.",
+			title: "Error de conexión",
+			icon: "🌐",
+			suggestions: [
+				"Verifica tu conexión a internet",
+				"El servidor podría estar temporalmente no disponible"
+			]
+		});
 	}
-
-	const pokemon = await response.json();
-
-	return {
-		pokemon
-	};
 }

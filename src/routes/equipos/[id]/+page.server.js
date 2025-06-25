@@ -2,24 +2,71 @@ import { API_URL } from '$lib/constantes/index.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
-	let url = new URL(`${API_URL}/equipos/${params.id}`);
-	const response = await fetch(url);
-	if (!response.ok) {
-		error(response.status);
+	try {
+		let url = new URL(`${API_URL}/equipos/${params.id}`);
+		const response = await fetch(url);
+		
+		if (!response.ok) {
+			if (response.status === 404) {
+				error(404, {
+					message: `No se encontró el equipo con ID ${params.id}`,
+					title: "Equipo no encontrado",
+					icon: "👥",
+					suggestions: [
+						"Verifica que el ID del equipo sea correcto",
+						"El equipo podría haber sido eliminado",
+						"Prueba creando un nuevo equipo"
+					],
+					backUrl: "/equipos",
+					backText: "Ver todos los equipos"
+				});
+			}
+			error(response.status, {
+				message: "Hubo un problema al cargar la información del equipo",
+				title: "Error del servidor",
+				icon: "⚠️"
+			});
+		}
+
+		let equipo = await response.json();
+
+		// Validar que tenga datos mínimos
+		if (!equipo || !equipo.nombre) {
+			error(500, {
+				message: "Los datos del equipo están incompletos",
+				title: "Error en los datos",
+				icon: "🔧"
+			});
+		}
+
+		const pokemonsRes = await fetch(`${API_URL}/pokemon/?limit=100&offset=0`);
+		if (!pokemonsRes.ok) throw error(pokemonsRes.status);
+		const pokemonsDisponibles = await pokemonsRes.json();
+		
+		const movimientosRes = await fetch(`${API_URL}/movimientos`);
+		if (!movimientosRes.ok) throw error(movimientosRes.status);
+		const movimientos = await movimientosRes.json();
+
+		return {
+			equipo,
+			pokemonsDisponibles,
+			movimientos
+		};
+	} catch (err) {
+		if (err.status) {
+			throw err;
+		}
+		
+		error(503, {
+			message: "No se pudo conectar con el servidor. Inténtalo más tarde.",
+			title: "Error de conexión",
+			icon: "🌐",
+			suggestions: [
+				"Verifica tu conexión a internet",
+				"El servidor podría estar temporalmente no disponible"
+			]
+		});
 	}
-
-	let equipo = await response.json();	const pokemonsRes = await fetch(`${API_URL}/pokemon/?limit=100&offset=0`);
-	if (!pokemonsRes.ok) throw error(pokemonsRes.status);
-	const pokemonsDisponibles = await pokemonsRes.json();
-	const movimientosRes = await fetch(`${API_URL}/movimientos`);
-	if (!movimientosRes.ok) throw error(movimientosRes.status);
-	const movimientos = await movimientosRes.json();
-
-	return {
-		equipo,
-		pokemonsDisponibles,
-		movimientos
-	};
 }
 
 export const actions = {

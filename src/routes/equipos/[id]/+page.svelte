@@ -1,5 +1,6 @@
 <script>
 	import Typeahead from '$lib/components/Typeahead.svelte';
+	import EmptyState from '$lib/components/EmptyState.svelte';
 	import { API_URL } from '$lib/constantes/index.js';
 	import { hideLoading, showLoading } from '$lib/stores/loading.js';
 	import { onMount } from 'svelte';
@@ -274,129 +275,137 @@
 			Integrantes de {data.equipo.nombre}
 			<span class="text-sm font-normal text-slate-600">({data.equipo.integrantes.length}/6)</span>
 		</h3>
-		<div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-			<table class="w-full table-auto">
-				<thead>
-					<tr class="bg-slate-50">
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Eliminar</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Nombre del Integrante</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Pokemon Integrante</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Así se ve el Pokemon</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Movimiento 1</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Ver Mov. 1</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Movimiento 2</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Ver Mov. 2</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Movimiento 3</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Ver Mov. 3</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Movimiento 4</th
-						>
-						<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
-							>Ver Mov. 4</th
-						>
-					</tr>
-				</thead>
-				<tbody>
-					{#each data.equipo.integrantes as integrante}
-						{@const movimientosFormateados = obtenerMovimientosFormateados(integrante)}
-						<tr class="hover:bg-slate-50 transition-colors">
-							<td class="border border-slate-300 p-3 text-center">
-								<form action="?/eliminar_integrante" method="POST" onsubmit={manejarEliminarIntegrante}>
-									<input type="hidden" name="integrante_id" value={integrante.id} />
-									<input type="hidden" name="id_equipo" value={data.equipo.id} />
-									<button
-										class="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50 transition-colors"
-										aria-label="Eliminar integrante {integrante.apodo}"
-									>
-										<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-											<path
-												fill-rule="evenodd"
-												d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-												clip-rule="evenodd"
-											></path>
-										</svg>
-									</button>
-								</form>
-							</td>
-							<td class="border border-slate-300 p-3 text-center font-medium">{integrante.apodo}</td
-							>
-							<td class="border border-slate-300 p-3 text-center">
-								<a
-									href="/pokemones/{integrante.pokemon.id}"
-									class="text-blue-600 hover:text-blue-800 font-medium"
-								>
-									{integrante.pokemon.nombre}
-								</a>
-							</td>
-							<td class="border border-slate-300 p-3 text-center">
-								<img
-									src={integrante.pokemon.imagen}
-									alt={integrante.pokemon.nombre}
-									class="mx-auto h-20 w-20 object-contain rounded-lg transition-transform hover:scale-110"
-								/>
-							</td>
 
-							<!-- Movimientos en columnas fijas -->
-							{#each movimientosFormateados as movimiento, i}
+		{#if data.equipo.integrantes.length === 0}
+			<EmptyState
+				title="Sin integrantes"
+				message="Este equipo aún no tiene integrantes. ¡Comienza agregando tu primer Pokémon!"
+				icon="👥"
+				suggestions={[
+					"Usa el formulario de abajo para agregar un nuevo integrante",
+					"Cada equipo puede tener hasta 6 integrantes",
+					"Cada integrante puede aprender hasta 4 movimientos"
+				]}
+			/>
+		{:else}
+			<div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+				<table class="w-full table-auto">
+					<thead>
+						<tr class="bg-slate-50">
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Eliminar</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Nombre del Integrante</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Pokemon Integrante</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Así se ve el Pokemon</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Movimiento 1</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Ver Mov. 1</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Movimiento 2</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Ver Mov. 2</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Movimiento 3</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Ver Mov. 3</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Movimiento 4</th
+							>
+							<th class="border border-slate-300 p-3 text-center font-semibold text-slate-700"
+								>Ver Mov. 4</th
+							>
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.equipo.integrantes as integrante}
+							{@const movimientosFormateados = obtenerMovimientosFormateados(integrante)}
+							<tr class="hover:bg-slate-50 transition-colors">
 								<td class="border border-slate-300 p-3 text-center">
-									{#if movimiento}
-										<span class="text-sm font-medium">{movimiento.nombre}</span>
-									{:else}
-										<span class="text-slate-400 italic text-sm">Sin movimiento</span>
-									{/if}
-								</td>
-								<td class="border border-slate-300 p-3 text-center">
-									{#if movimiento}
-										<a
-											href="/movimientos/{movimiento.id}"
-											class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors text-white"
-											aria-label="Ver detalles de {movimiento.nombre}"
+									<form action="?/eliminar_integrante" method="POST" onsubmit={manejarEliminarIntegrante}>
+										<input type="hidden" name="integrante_id" value={integrante.id} />
+										<input type="hidden" name="id_equipo" value={data.equipo.id} />
+										<button
+											class="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50 transition-colors"
+											aria-label="Eliminar integrante {integrante.apodo}"
 										>
-											<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-												<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+											<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
 												<path
 													fill-rule="evenodd"
-													d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+													d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
 													clip-rule="evenodd"
 												></path>
 											</svg>
-										</a>
-									{:else}
-										<span class="text-slate-300">-</span>
-									{/if}
+										</button>
+									</form>
 								</td>
-							{/each}
-						</tr>
-					{:else}
-						<tr>
-							<td colspan="12" class="border border-slate-300 p-8 text-center text-slate-500">
-								No hay integrantes en este equipo
-							</td>
-						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+								<td class="border border-slate-300 p-3 text-center font-medium">{integrante.apodo}</td
+								>
+								<td class="border border-slate-300 p-3 text-center">
+									<a
+										href="/pokemones/{integrante.pokemon.id}"
+										class="text-blue-600 hover:text-blue-800 font-medium"
+									>
+										{integrante.pokemon.nombre}
+									</a>
+								</td>
+								<td class="border border-slate-300 p-3 text-center">
+									<img
+										src={integrante.pokemon.imagen}
+										alt={integrante.pokemon.nombre}
+										class="mx-auto h-20 w-20 object-contain rounded-lg transition-transform hover:scale-110"
+									/>
+								</td>
+
+								<!-- Movimientos en columnas fijas -->
+								{#each movimientosFormateados as movimiento, i}
+									<td class="border border-slate-300 p-3 text-center">
+										{#if movimiento}
+											<span class="text-sm font-medium">{movimiento.nombre}</span>
+										{:else}
+											<span class="text-slate-400 italic text-sm">Sin movimiento</span>
+										{/if}
+									</td>
+									<td class="border border-slate-300 p-3 text-center">
+										{#if movimiento}
+											<a
+												href="/movimientos/{movimiento.id}"
+												class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors text-white"
+												aria-label="Ver detalles de {movimiento.nombre}"
+											>
+												<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+													<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+													<path
+														fill-rule="evenodd"
+														d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+														clip-rule="evenodd"
+													></path>
+												</svg>
+											</a>
+										{:else}
+											<span class="text-slate-300">-</span>
+										{/if}
+									</td>
+								{/each}
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
 		<!-- Grid de tres formularios -->
 		<div class="grid md:grid-cols-3 gap-6 mt-8">
 			<!-- 1. Formulario: Crear nuevo integrante -->

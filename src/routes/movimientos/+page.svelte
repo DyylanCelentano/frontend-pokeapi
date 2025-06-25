@@ -1,5 +1,6 @@
 <script>
 	import Pagination from '$lib/components/Pagination.svelte';
+	import EmptyState from '$lib/components/EmptyState.svelte';
 	import { showLoading } from '$lib/stores/loading.js';
 	export let data;
 	//lo busque y es la forma correcta de usar el data $props
@@ -174,8 +175,13 @@
 						</tr>
 					{:else}
 						<tr>
-							<td colspan="9" class="border border-slate-300 p-4 text-center text-slate-500">
-								Movimientos no encontrados
+							<td colspan="9" class="border border-slate-300 p-8">
+								<EmptyState 
+									type="movimientos"
+									searchTerm={search}
+									hasFilters={!!search}
+									icon="⚔️"
+								/>
 							</td>
 						</tr>
 					{/each}

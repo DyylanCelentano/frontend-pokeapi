@@ -1,6 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
 	import Pagination from '$lib/components/Pagination.svelte';
+	import EmptyState from '$lib/components/EmptyState.svelte';
 	import { showLoading } from '$lib/stores/loading.js';
 	export let data;
 
@@ -152,9 +153,19 @@
 						</tr>
 					{:else}
 						<tr>
-							<td colspan="4" class="border border-slate-300 p-4 text-center text-slate-500"
-								>Equipos no encontrados</td
-							>
+							<td colspan="5" class="border border-slate-300 p-8">
+								<EmptyState 
+									type="equipos"
+									searchTerm={data.query || ''}
+									hasFilters={!!(data.query)}
+									icon="👥"
+									suggestions={[
+										"Crea tu primer equipo usando el formulario de arriba",
+										"Verifica la ortografía si estás buscando un equipo específico",
+										"Todos los equipos creados aparecerán aquí"
+									]}
+								/>
+							</td>
 						</tr>
 					{/each}
 				</tbody>

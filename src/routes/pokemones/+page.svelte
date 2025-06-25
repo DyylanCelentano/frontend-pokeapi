@@ -3,6 +3,7 @@
 	import EtiquetaTipo from '$lib/components/EtiquetaTipo.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
 	import TarjetaPokemon from '$lib/components/TarjetaPokemon.svelte';
+	import EmptyState from '$lib/components/EmptyState.svelte';
 	import { NOMBRES_TIPOS } from '$lib/constantes';
 	import { showLoading } from '$lib/stores/loading.js';
 	import { onMount } from 'svelte';
@@ -144,19 +145,12 @@
 					{/each}
 				</div>
 			{:else}
-				<div class="text-center py-12 bg-white rounded-lg border border-slate-200">
-					<div class="text-6xl mb-4">🔍</div>
-					<h3 class="text-xl font-semibold text-slate-800 mb-2">No se encontraron Pokémon</h3>
-					<p class="text-slate-600 mb-6">
-						Intenta ajustar tus filtros o buscar con otros términos.
-					</p>
-					<button
-						class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md font-medium transition-colors"
-						onclick={limpiarFiltros}
-					>
-						Limpiar filtros
-					</button>
-				</div>
+				<EmptyState 
+					type="pokémon"
+					searchTerm={terminoBusqueda || ($page.url.searchParams.get('nombre') || '')}
+					hasFilters={!!tipoSeleccionado || !!terminoBusqueda}
+					icon="🐾"
+				/>
 			{/if}
 		</div>
 	</div>

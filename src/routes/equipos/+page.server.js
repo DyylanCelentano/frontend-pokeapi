@@ -7,7 +7,7 @@ export async function load({ url }) {
     const pageSize = 20;
     const offset = page * pageSize;
 
-    let apiUrl = new URL(`${API_URL}/equipos/`)
+    let apiUrl = new URL(`${API_URL}/equipos`)
     apiUrl.searchParams.set('limit', pageSize.toString());
     apiUrl.searchParams.set('offset', offset.toString());
     if (query) {
@@ -39,7 +39,7 @@ export const actions = {
 
         const payload = { nombre, id_generacion };
 
-        let url = new URL(`${API_URL}/equipos/`)
+        let url = new URL(`${API_URL}/equipos`)
         //console.log(payload);
         const response = await fetch(url, {
             method: 'POST',
@@ -57,7 +57,7 @@ export const actions = {
         const data = await request.formData();
         //console.log(data.get('id_equipo'))
         //console.log(data.get('integrante_id'))
-        let url = new URL(`${API_URL}/equipos/${data.get('id_equipo')}/`)
+        let url = new URL(`${API_URL}/equipos/${data.get('id_equipo')}`)
 
         const response = await fetch(url, {
             method: 'DELETE',

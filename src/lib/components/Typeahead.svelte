@@ -23,20 +23,31 @@
 	}
 
 	async function fetchResults() {
-		let url = new URL(`${endpoint}`);
-		let params = { nombre_parcial: query };
-		url.search = new URLSearchParams(params).toString();
+		try {
+			let url = new URL(`${endpoint}`);
+			let params = { nombre_parcial: query };
+			url.search = new URLSearchParams(params).toString();
 
-		const response = await fetch(url, {
-			method: 'GET',
-			headers: { 'Content-Type': 'application/json' }
-		});
-		if (!response.ok) {
-			error(response.status, response);
+			const response = await fetch(url, {
+				method: 'GET',
+				headers: { 'Content-Type': 'application/json' }
+			});
+			
+			if (!response.ok) {
+				console.error('Error fetching results:', response.status, response.statusText);
+				results = [];
+				showDropdown = false;
+				return;
+			}
+
+			const data = await response.json();
+			results = data.results || data || []; // Manejar diferentes estructuras de respuesta
+			showDropdown = results.length > 0;
+		} catch (error) {
+			console.error('Error in fetchResults:', error);
+			results = [];
+			showDropdown = false;
 		}
-
-		results = await response.json();
-		showDropdown = results.length > 0;
 	}
 
 	function selectResult(result) {

@@ -1,7 +1,14 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { showLoading } from '$lib/stores/loading.js';
 	import EtiquetaTipo from './EtiquetaTipo.svelte';
 
 	let { pokemon } = $props();
+	
+	function verDetalles() {
+		showLoading('Cargando información del Pokémon...');
+		goto(`/pokemones/${pokemon.id}`);
+	}
 </script>
 
 <div
@@ -71,12 +78,12 @@
 		</div> -->
 
 		<div class="flex gap-2">
-			<a
-				href="/pokemones/{pokemon.id}"
+			<button
+				onclick={verDetalles}
 				class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-md font-medium transition-colors text-sm"
 			>
 				Ver detalles
-			</a>
+			</button>
 		</div>
 	</div>
 </div>

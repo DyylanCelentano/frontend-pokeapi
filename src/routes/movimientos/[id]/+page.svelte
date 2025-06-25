@@ -1,185 +1,197 @@
 <script>
+	import { goto } from '$app/navigation';
+	import { hideLoading, showLoading } from '$lib/stores/loading.js';
+	import { onMount } from 'svelte';
+	
 	let { data } = $props();
+	
+	// Mostrar loading al cargar la página
+	onMount(() => {
+		showLoading('Cargando información del movimiento...');
+		setTimeout(() => {
+			hideLoading();
+		}, 600);
+	});
+	
+	function getTypeColor(typeName) {
+		const colors = {
+			'Normal': 'bg-gray-400',
+			'Lucha': 'bg-red-600',
+			'Volador': 'bg-blue-400',
+			'Veneno': 'bg-purple-500',
+			'Tierra': 'bg-yellow-600',
+			'Roca': 'bg-yellow-800',
+			'Insecto': 'bg-green-500',
+			'Fantasma': 'bg-purple-700',
+			'Acero': 'bg-gray-600',
+			'Fuego': 'bg-red-500',
+			'Agua': 'bg-blue-500',
+			'Planta': 'bg-green-600',
+			'Eléctrico': 'bg-yellow-400',
+			'Psíquico': 'bg-pink-500',
+			'Hielo': 'bg-blue-300',
+			'Dragón': 'bg-purple-800',
+			'Siniestro': 'bg-gray-800',
+			'Hada': 'bg-pink-300'
+		};
+		return colors[typeName] || 'bg-gray-400';
+	}
+	
+	function getCategoryIcon(category) {
+		const icons = {
+			'Físico': '👊',
+			'Especial': '✨',
+			'Estado': '🔄'
+		};
+		return icons[category] || '❓';
+	}
+	
+	function verPokemon(pokemonId) {
+		showLoading('Cargando información del Pokémon...');
+		goto(`/pokemones/${pokemonId}`);
+	}
 </script>
 
-<div class="min-h-screen bg-slate-50 text-lg py-8">
-	<div class="max-w-7xl mx-auto px-4">
-		<a
-			href="../"
-			class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md font-medium transition-colors mb-8"
-			>◄ Menu Principal</a
-		>
+<div class="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+	<!-- Header con navegación -->
+	<div class="bg-white shadow-sm border-b">
+		<div class="max-w-7xl mx-auto px-4 py-4">
+			<a
+				href="/movimientos"
+				class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors"
+			>
+				<span class="text-xl">←</span>
+				Volver a Movimientos
+			</a>
+		</div>
+	</div>
 
-		<!-- Encabezado de la página -->
-		<div class="text-center mb-8">
-			<h1 class="text-4xl font-bold text-slate-800 mb-4">{data.movimiento.nombre}</h1>
+	<div class="max-w-6xl mx-auto px-4 py-8">
+		<!-- Tarjeta principal del movimiento -->
+		<div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+			<div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8">
+				<div class="text-center">
+					<h1 class="text-5xl font-bold mb-4">{data.movimiento.nombre}</h1>
+					<div class="flex flex-wrap gap-3 justify-center mb-6">
+						<span class="px-4 py-2 {getTypeColor(data.movimiento.tipo.nombre)} text-white rounded-full font-semibold shadow-lg">
+							{data.movimiento.tipo.nombre}
+						</span>
+						<span class="px-4 py-2 bg-white/20 text-white rounded-full font-semibold shadow-lg backdrop-blur-sm">
+							{getCategoryIcon(data.movimiento.categoria)} {data.movimiento.categoria}
+						</span>
+					</div>
+					<p class="text-xl opacity-90 max-w-3xl mx-auto">{data.movimiento.efecto}</p>
+				</div>
+			</div>
 		</div>
 
-		<!-- Información del movimiento -->
-		<div class="bg-slate-50 p-6 rounded-lg border border-slate-200 mb-8">
-			<ul class="list-none p-0 m-0 flex flex-col gap-3">
-				<li class="p-3 border-b border-slate-200 last:border-b-0">
-					<b>Generacion del Movimiento: </b>
-					{data.movimiento.generacion.nombre}
-				</li>
-				<li class="p-3 border-b border-slate-200 last:border-b-0">
-					<b>Tipo del Movimiento: </b>{data.movimiento.tipo.nombre}
-				</li>
-				<li class="p-3 border-b border-slate-200 last:border-b-0">
-					<b>Categoria: </b>{data.movimiento.categoria}
-				</li>
-				<li class="p-3 border-b border-slate-200 last:border-b-0">
-					<b>Potencia: </b>{data.movimiento.potencia}
-				</li>
-				<li class="p-3 border-b border-slate-200 last:border-b-0">
-					<b>Precision: </b>{data.movimiento.precision}
-				</li>
-				<li class="p-3 border-b border-slate-200 last:border-b-0">
-					<b>Puntos de Poder: </b>{data.movimiento.puntos_de_poder}
-				</li>
-				<li class="p-3"><b>Efecto: </b>{data.movimiento.efecto}</li>
-			</ul>
+		<!-- Grid de estadísticas del movimiento -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+			<div class="bg-white rounded-xl shadow-lg p-6 text-center">
+				<div class="text-3xl font-bold text-red-500 mb-2">{data.movimiento.potencia || '—'}</div>
+				<div class="text-slate-600 font-medium">Potencia</div>
+			</div>
+			<div class="bg-white rounded-xl shadow-lg p-6 text-center">
+				<div class="text-3xl font-bold text-blue-500 mb-2">{data.movimiento.precision || '—'}%</div>
+				<div class="text-slate-600 font-medium">Precisión</div>
+			</div>
+			<div class="bg-white rounded-xl shadow-lg p-6 text-center">
+				<div class="text-3xl font-bold text-green-500 mb-2">{data.movimiento.puntos_de_poder}</div>
+				<div class="text-slate-600 font-medium">PP</div>
+			</div>
+			<div class="bg-white rounded-xl shadow-lg p-6 text-center">
+				<div class="text-lg font-bold text-purple-500 mb-2">{data.movimiento.generacion.nombre}</div>
+				<div class="text-slate-600 font-medium">Generación</div>
+			</div>
 		</div>
 
-		<h3 class="text-2xl font-semibold text-slate-800 mt-8 mb-4">
-			Pokemones que aprenden {data.movimiento.nombre} por Huevo
-		</h3>
-		<div class="overflow-x-auto mb-8">
-			<table class="w-full text-base border-collapse">
-				<thead>
-					<tr class="bg-slate-50">
-						<th class="border border-slate-300 p-2 text-center font-semibold">Nombre del Pokemon</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Altura del Pokemon (metros)</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Peso del Pokemon (kilogramos)</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Asi se ve el Pokemon</th
-						>
-					</tr>
-				</thead>
-				<tbody>
+		<!-- Pokémon que aprenden el movimiento -->
+		
+		<!-- Por huevo -->
+		{#if data.movimiento.pokemon_por_huevo && data.movimiento.pokemon_por_huevo.length > 0}
+			<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+				<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+					<span>🥚</span>
+					Pokémon que aprenden por Huevo
+				</h2>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 					{#each data.movimiento.pokemon_por_huevo as pokemon}
-						<tr class="hover:bg-slate-50 transition-colors">
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.nombre}</td>
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.altura}</td>
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.peso}</td>
-							<td class="border border-slate-300 p-0 text-center w-2/5">
-								<a href="/pokemones/{pokemon.id}">
-									<img
-										src={pokemon.imagen}
-										alt={pokemon.nombre}
-										class="block mx-auto h-auto max-w-[100px] transition-all duration-200 hover:bg-slate-50 hover:rounded-full hover:border-4 hover:border-white"
-									/>
-								</a>
-							</td>
-						</tr>
-					{:else}
-						<tr>
-							<td colspan="4" class="border border-slate-300 p-4 text-center text-slate-500"
-								>No Hay Pokemones que aprendan este movimiento por Huevo</td
-							>
-						</tr>
+						<button
+							onclick={() => verPokemon(pokemon.id)}
+							class="group bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+						>
+							<img 
+								src={pokemon.imagen} 
+								alt={pokemon.nombre}
+								class="w-20 h-20 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
+							/>
+							<h3 class="font-semibold text-slate-800 capitalize text-sm mb-1">{pokemon.nombre}</h3>
+							<div class="text-xs text-slate-600">
+								<div>Altura: {pokemon.altura}m</div>
+								<div>Peso: {pokemon.peso}kg</div>
+							</div>
+						</button>
 					{/each}
-				</tbody>
-			</table>
-		</div>
+				</div>
+			</div>
+		{/if}
 
-		<h3 class="text-2xl font-semibold text-slate-800 mt-8 mb-4">
-			Pokemones que aprenden {data.movimiento.nombre} por Maquina
-		</h3>
-		<div class="overflow-x-auto mb-8">
-			<table class="w-full text-base border-collapse">
-				<thead>
-					<tr class="bg-slate-50">
-						<th class="border border-slate-300 p-2 text-center font-semibold">Nombre del Pokemon</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Altura del Pokemon (metros)</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Peso del Pokemon (kilogramos)</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Asi se ve el Pokemon</th
-						>
-					</tr>
-				</thead>
-				<tbody>
+		<!-- Por máquina -->
+		{#if data.movimiento.pokemon_por_maquina && data.movimiento.pokemon_por_maquina.length > 0}
+			<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+				<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+					<span>🔧</span>
+					Pokémon que aprenden por Máquina
+				</h2>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 					{#each data.movimiento.pokemon_por_maquina as pokemon}
-						<tr class="hover:bg-slate-50 transition-colors">
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.nombre}</td>
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.altura}</td>
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.peso}</td>
-							<td class="border border-slate-300 p-0 text-center w-2/5">
-								<a href="/pokemones/{pokemon.id}">
-									<img
-										src={pokemon.imagen}
-										alt={pokemon.nombre}
-										class="block mx-auto h-auto max-w-[100px] transition-all duration-200 hover:bg-slate-50 hover:rounded-full hover:border-4 hover:border-white"
-									/>
-								</a>
-							</td>
-						</tr>
-					{:else}
-						<tr>
-							<td colspan="4" class="border border-slate-300 p-4 text-center text-slate-500"
-								>No Hay Pokemones que aprendan este movimiento por Maquina</td
-							>
-						</tr>
+						<button
+							onclick={() => verPokemon(pokemon.id)}
+							class="group bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+						>
+							<img 
+								src={pokemon.imagen} 
+								alt={pokemon.nombre}
+								class="w-20 h-20 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
+							/>
+							<h3 class="font-semibold text-slate-800 capitalize text-sm mb-1">{pokemon.nombre}</h3>
+							<div class="text-xs text-slate-600">
+								<div>Altura: {pokemon.altura}m</div>
+								<div>Peso: {pokemon.peso}kg</div>
+							</div>
+						</button>
 					{/each}
-				</tbody>
-			</table>
-		</div>
+				</div>
+			</div>
+		{/if}
 
-		<h3 class="text-2xl font-semibold text-slate-800 mt-8 mb-4">
-			Pokemones que aprenden {data.movimiento.nombre} por Nivel
-		</h3>
-		<div class="overflow-x-auto mb-8">
-			<table class="w-full text-base border-collapse">
-				<thead>
-					<tr class="bg-slate-50">
-						<th class="border border-slate-300 p-2 text-center font-semibold">Nombre del Pokemon</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Altura del Pokemon (metros)</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Peso del Pokemon (kilogramos)</th
-						>
-						<th class="border border-slate-300 p-2 text-center font-semibold"
-							>Asi se ve el Pokemon</th
-						>
-					</tr>
-				</thead>
-				<tbody>
+		<!-- Por nivel -->
+		{#if data.movimiento.pokemon_por_nivel && data.movimiento.pokemon_por_nivel.length > 0}
+			<div class="bg-white rounded-xl shadow-lg p-6">
+				<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+					<span>📈</span>
+					Pokémon que aprenden por Nivel
+				</h2>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
 					{#each data.movimiento.pokemon_por_nivel as pokemon}
-						<tr class="hover:bg-slate-50 transition-colors">
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.nombre}</td>
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.altura}</td>
-							<td class="border border-slate-300 p-2 text-center w-1/5">{pokemon.peso}</td>
-							<td class="border border-slate-300 p-0 text-center w-2/5">
-								<a href="/pokemones/{pokemon.id}">
-									<img
-										src={pokemon.imagen}
-										alt={pokemon.nombre}
-										class="block mx-auto h-auto max-w-[100px] transition-all duration-200 hover:bg-slate-50 hover:rounded-full hover:border-4 hover:border-white"
-									/>
-								</a>
-							</td>
-						</tr>
-					{:else}
-						<tr>
-							<td colspan="4" class="border border-slate-300 p-4 text-center text-slate-500"
-								>No Hay Pokemones que aprendan este movimiento por Nivel</td
-							>
-						</tr>
+						<button
+							onclick={() => verPokemon(pokemon.id)}
+							class="group bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+						>
+							<img 
+								src={pokemon.imagen} 
+								alt={pokemon.nombre}
+								class="w-20 h-20 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
+							/>
+							<h3 class="font-semibold text-slate-800 capitalize text-sm mb-1">{pokemon.nombre}</h3>
+							<div class="text-xs text-slate-600">
+								<div>Altura: {pokemon.altura}m</div>
+								<div>Peso: {pokemon.peso}kg</div>
+							</div>
+						</button>
 					{/each}
-				</tbody>
-			</table>
-		</div>
+				</div>
+			</div>
+		{/if}
 	</div>
 </div>

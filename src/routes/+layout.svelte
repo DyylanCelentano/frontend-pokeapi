@@ -1,8 +1,15 @@
 <script>
   import Encabezado from '$lib/components/Encabezado.svelte';
+  import LoadingPokemon from '$lib/components/LoadingPokemon.svelte';
+  import { isLoading, loadingMessage } from '$lib/stores/loading.js';
   import '../app.css';
   
   let { children } = $props();
+  
+  // Debug: observar cambios en el store
+  $effect(() => {
+    console.log('Estado de loading:', $isLoading, 'Mensaje:', $loadingMessage);
+  });
 </script>
 
 <div class="min-h-screen flex flex-col">
@@ -11,8 +18,17 @@
 
 
   <!-- Contenido principal -->
-  <main class="flex-1">
+  <main class="flex-1 relative">
     {@render children?.()}
+    
+    <!-- Loading overlay -->
+    {#if $isLoading}
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 shadow-2xl">
+          <LoadingPokemon mensaje={$loadingMessage} />
+        </div>
+      </div>
+    {/if}
   </main>
   
 

@@ -29,7 +29,7 @@ export async function load({ url }) {
     const pageSize = 20;
     const offset = page * pageSize;
 
-    let apiUrl = new URL(`${API_URL}/movimientos/`)
+    let apiUrl = new URL(`${API_URL}/movimientos`)
     apiUrl.searchParams.set('limit', pageSize.toString());
     apiUrl.searchParams.set('offset', offset.toString());
     if (query) {

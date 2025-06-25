@@ -1,8 +1,18 @@
 <script>
 	import Typeahead from '$lib/components/Typeahead.svelte';
 	import { API_URL } from '$lib/constantes/index.js';
+	import { hideLoading, showLoading } from '$lib/stores/loading.js';
+	import { onMount } from 'svelte';
 
 	let { data } = $props();
+	
+	// Mostrar loading al cargar la página
+	onMount(() => {
+		showLoading('Cargando información del equipo...');
+		setTimeout(() => {
+			hideLoading();
+		}, 600);
+	});
 
 	// Variables de estado para la información del equipo
 	let modificarEquipo = $state(0);
@@ -87,9 +97,11 @@
 
 	function manejarEnvioCrearIntegrante() {
 		if (!validarLimiteIntegrantes()) return false;
+		showLoading('Agregando integrante...');
 		setTimeout(() => {
 			limpiarFormularioNuevoIntegrante();
 			mensajeExito = 'Integrante agregado exitosamente.';
+			hideLoading();
 		}, 100);
 		return true;
 	}
@@ -108,9 +120,11 @@
 			return false;
 		}
 
+		showLoading('Agregando movimiento...');
 		setTimeout(() => {
 			limpiarFormularioMovimiento();
 			mensajeExito = 'Movimiento agregado exitosamente.';
+			hideLoading();
 		}, 100);
 		return true;
 	}
@@ -121,10 +135,17 @@
 			return false;
 		}
 
+		showLoading('Editando integrante...');
 		setTimeout(() => {
 			limpiarFormularioEdicion();
 			mensajeExito = 'Integrante editado exitosamente.';
+			hideLoading();
 		}, 100);
+		return true;
+	}
+
+	function manejarEliminarIntegrante() {
+		showLoading('Eliminando integrante...');
 		return true;
 	}
 </script>
@@ -300,7 +321,7 @@
 						{@const movimientosFormateados = obtenerMovimientosFormateados(integrante)}
 						<tr class="hover:bg-slate-50 transition-colors">
 							<td class="border border-slate-300 p-3 text-center">
-								<form action="?/eliminar_integrante" method="POST">
+								<form action="?/eliminar_integrante" method="POST" onsubmit={manejarEliminarIntegrante}>
 									<input type="hidden" name="integrante_id" value={integrante.id} />
 									<input type="hidden" name="id_equipo" value={data.equipo.id} />
 									<button

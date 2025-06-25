@@ -2,7 +2,7 @@ import { API_URL, TIPOS } from '$lib/constantes/index';
 import { error } from '@sveltejs/kit';
 
 export async function load({ url }) {
-	const apiUrl = new URL(`${API_URL}/pokemon/`);
+	const apiUrl = new URL(`${API_URL}/pokemon`);
 	const queryNombreParcial = url.searchParams.get('nombre') || '';
 	const queryTipo = url.searchParams.get('tipo') || '';
 	const queryPage = parseInt(url.searchParams.get('page') || '0');
@@ -31,7 +31,7 @@ export const actions = {
 	filter: async ({ request }) => {
 		const data = await request.formData();
 		const { nombre, tipo } = data;
-		let apiUrl = new URL(`${API_URL}/pokemon/`);
+		let apiUrl = new URL(`${API_URL}/pokemon`);
 
 		if (nombre) apiUrl.searchParams.set('nombre_parcial', nombre);
 		if (tipo) apiUrl.searchParams.set('tipo', TIPOS[tipo]);

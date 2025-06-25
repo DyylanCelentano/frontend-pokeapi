@@ -1,6 +1,7 @@
 <script>
 	import { enhance } from '$app/forms';
 	import Pagination from '$lib/components/Pagination.svelte';
+	import { showLoading } from '$lib/stores/loading.js';
 	export let data;
 
 	let search = '';
@@ -10,11 +11,27 @@
 	$: equiposFiltrados = data.equipos.filter((m) =>
 		m.nombre.toLowerCase().includes(search.toLowerCase())
 	);
+	
 	function mostrarBannerEquipoCreado() {
 		exito = true;
 		setTimeout(() => {
 			exito = false;
 		}, 3000);
+	}
+	
+	function eliminarEquipo() {
+		showLoading('Eliminando equipo...');
+		// El loading se ocultará cuando la página se recargue
+	}
+	
+	function verDetalleEquipo(equipoId) {
+		showLoading('Cargando detalles del equipo...');
+		window.location.href = `/equipos/${equipoId}`;
+	}
+	
+	function crearEquipo() {
+		showLoading('Creando equipo...');
+		// El loading se ocultará cuando la página se recargue
 	}
 </script>
 
@@ -42,6 +59,7 @@
 				method="POST"
 				action="?/create"
 				class="space-y-4"
+				onsubmit={crearEquipo}
 				use:enhance={() => {
 					mostrarBannerEquipoCreado();
 				}}
@@ -107,21 +125,21 @@
 					{#each equiposFiltrados as equipo}
 						<tr class="hover:bg-slate-50 transition-colors">
 							<td class="border border-slate-300 p-3 text-center">
-								<a
-									href="/equipos/{equipo.id}"
+								<button
+									onclick={() => verDetalleEquipo(equipo.id)}
 									class="inline-flex items-center justify-center w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
 								>
 									<img
 										src="https://img.icons8.com/ios-filled/24/ffffff/visible.png"
 										alt="Ver Equipo"
 									/>
-								</a>
+								</button>
 							</td>
 							<td class="border border-slate-300 p-3 text-center">{equipo.nombre}</td>
 							<td class="border border-slate-300 p-3 text-center">{equipo.generacion.nombre}</td>
 							<td class="border border-slate-300 p-3 text-center">{equipo.cantidad_integrantes}</td>
 							<td class="border border-slate-300 p-3 text-center">
-								<form action="?/eliminar_equipo" method="POST">
+								<form action="?/eliminar_equipo" method="POST" onsubmit={eliminarEquipo}>
 									<input type="hidden" name="id_equipo" value={equipo.id} />
 									<button
 										><img

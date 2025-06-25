@@ -2,7 +2,7 @@ import { API_URL } from '$lib/constantes/index.js';
 import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
-	let url = new URL(`${API_URL}/equipos/${params.id}/`);
+	let url = new URL(`${API_URL}/equipos/${params.id}`);
 	const response = await fetch(url);
 	if (!response.ok) {
 		error(response.status);
@@ -11,7 +11,7 @@ export async function load({ params }) {
 	let equipo = await response.json();	const pokemonsRes = await fetch(`${API_URL}/pokemon/?limit=100&offset=0`);
 	if (!pokemonsRes.ok) throw error(pokemonsRes.status);
 	const pokemonsDisponibles = await pokemonsRes.json();
-	const movimientosRes = await fetch(`${API_URL}/movimientos/`);
+	const movimientosRes = await fetch(`${API_URL}/movimientos`);
 	if (!movimientosRes.ok) throw error(movimientosRes.status);
 	const movimientos = await movimientosRes.json();
 
@@ -39,7 +39,7 @@ export const actions = {
 		}
 	},
 	actualizar_equipo: async ({ request }) => {
-		const data = await request.formData();		let url = new URL(`${API_URL}/equipos/${data.get('id_equipo')}/`);
+		const data = await request.formData();		let url = new URL(`${API_URL}/equipos/${data.get('id_equipo')}`);
 		const nombre = data.get('nombre');
 		const id_generacion = parseInt(data.get('id_generacion'));
 
@@ -61,7 +61,7 @@ export const actions = {
 			apodo: data.get('apodo'),
 			id_pokemon: parseInt(data.get('id_pokemon'))
 		};
-		const url = `${API_URL}/equipos/${id_equipo}/integrantes/`;
+		const url = `${API_URL}/equipos/${id_equipo}/integrantes`;
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -81,7 +81,7 @@ export const actions = {
 			id_movimiento: id_movimiento
 		};
 
-		const url = `${API_URL}/equipos/${id_equipo}/integrantes/${id_integrante}/movimientos/`;
+		const url = `${API_URL}/equipos/${id_equipo}/integrantes/${id_integrante}/movimientos`;
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
@@ -99,7 +99,7 @@ export const actions = {
 		const apodo = data.get('apodo');
 
 		// Obtener el equipo completo para acceder a los datos del integrante
-		const equipoUrl = `${API_URL}/equipos/${id_equipo}/`;
+		const equipoUrl = `${API_URL}/equipos/${id_equipo}`;
 		const equipoResponse = await fetch(equipoUrl);
 		if (!equipoResponse.ok) {
 			throw error(equipoResponse.status, 'Error al obtener el equipo');
@@ -117,7 +117,7 @@ export const actions = {
 			movimientos: integrante.movimientos?.map(m => m.id) || []
 		};
 
-		const url = `${API_URL}/equipos/${id_equipo}/integrantes/${id_integrante}/`;
+		const url = `${API_URL}/equipos/${id_equipo}/integrantes/${id_integrante}`;
 		const response = await fetch(url, {
 			method: 'PUT',
 			headers: { 'Content-Type': 'application/json' },

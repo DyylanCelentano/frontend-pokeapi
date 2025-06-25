@@ -1,4 +1,5 @@
 <script>
+	import PokemonAleatorio from '$lib/components/PokemonAleatorio.svelte';
 	import TarjetaPokemon from '$lib/components/TarjetaPokemon.svelte';
 
 	let { data } = $props();
@@ -50,6 +51,7 @@
 				</a>
 			{/each}
 		</div>
+		
 		<!-- Contenedor acciones -->
 	</div>
 </section>
@@ -81,5 +83,12 @@
 			{/each}
 		</div>
 		<!-- Lista pokemones -->
+	</div>
+</section>
+
+<!-- Sección de prueba del loading -->
+<section class="py-12 bg-slate-50">
+	<div class="max-w-7xl mx-auto px-4">
+		<PokemonAleatorio />
 	</div>
 </section>

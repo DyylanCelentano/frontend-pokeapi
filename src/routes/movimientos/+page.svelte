@@ -1,5 +1,6 @@
 <script>
 	import Pagination from '$lib/components/Pagination.svelte';
+	import { showLoading } from '$lib/stores/loading.js';
 	export let data;
 	//lo busque y es la forma correcta de usar el data $props
 
@@ -13,6 +14,16 @@
 	//osea que con cada cambio (en este caso de search) va a actualizarse
 	//se recorre data.movimientos y como un for, cada paso se llama m
 	//y despues el resto es bastante obvio lo que hace
+	
+	function buscarMovimientos() {
+		showLoading('Buscando movimientos...');
+		// El loading se ocultará cuando la página se recargue
+	}
+	
+	function verDetalleMovimiento(movimientoId) {
+		showLoading('Cargando detalles del movimiento...');
+		window.location.href = `/movimientos/${movimientoId}`;
+	}
 </script>
 
 <div class="min-h-screen bg-slate-50 text-lg py-8">
@@ -44,7 +55,7 @@
 
 			</div> <!-- parte de arriba -->
 			
-			<form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6"> <!-- Formulario -->
+			<form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6" onsubmit={buscarMovimientos}> <!-- Formulario -->
 
 				<div class="flex flex-col gap-2"> <!-- Buscar por nombre -->
 					<label for="nombre_parcial" class="text-sm font-medium text-slate-700">Buscar por nombre</label>
@@ -141,8 +152,8 @@
 					{#each movimientosFiltrados as movimiento}
 						<tr class="hover:bg-slate-50 transition-colors">
 							<td class="border border-slate-300 p-2 text-center">
-								<a 
-									href="/movimientos/{movimiento.id}" 
+								<button 
+									onclick={() => verDetalleMovimiento(movimiento.id)}
 									class="bg-slate-800 hover:bg-slate-600 transition-colors duration-200 border-0 rounded-full w-10 h-10 inline-flex items-center justify-center cursor-pointer"
 								>
 									<img
@@ -150,7 +161,7 @@
 										alt="Ver Movimiento"
 										class="w-6 h-6"
 									/>
-								</a>
+								</button>
 							</td>
 							<td class="border border-slate-300 p-2 text-center">{movimiento.nombre}</td>
 							<td class="border border-slate-300 p-2 text-center">{movimiento.generacion.nombre}</td>

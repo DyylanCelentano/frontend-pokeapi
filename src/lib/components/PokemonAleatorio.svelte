@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { API_URL } from '$lib/constantes/index.js';
 	import { hideLoading, showLoading } from '$lib/stores/loading.js';
+	import EtiquetaTipo from './EtiquetaTipo.svelte';
 	
 	let pokemonData = $state(null);
 	let errorMessage = $state('');
@@ -13,8 +14,12 @@
 		try {
 			const randomId = Math.floor(Math.random() * 150) + 1;
 			console.log('Buscando Pokémon ID:', randomId);
+			console.log('API_URL:', API_URL);
 			
-			const response = await fetch(`${API_URL}/pokemon/${randomId}`);
+			const url = `${API_URL}/pokemon/${randomId}`;
+			console.log('URL completa:', url);
+			
+			const response = await fetch(url);
 			console.log('Response status:', response.status);
 			
 			if (response.ok) {
@@ -24,11 +29,11 @@
 			} else {
 				const errorText = await response.text();
 				console.error('Error response:', errorText);
-				errorMessage = `Error al cargar el Pokémon: ${response.status}`;
+				errorMessage = `Error al cargar el Pokémon: ${response.status} - ${errorText}`;
 			}
 		} catch (err) {
 			console.error('Error catch:', err);
-			errorMessage = 'Error de conexión. Verifica tu conexión a internet.';
+			errorMessage = `Error de conexión: ${err.message}. Verifica tu conexión a internet y que la API esté disponible.`;
 		} finally {
 			hideLoading();
 		}
@@ -103,9 +108,7 @@
 					<h4 class="font-bold text-xl sm:text-2xl capitalize text-center mt-2">{pokemonData.nombre}</h4>
 					<div class="flex flex-wrap gap-2 mt-2 justify-center">
 						{#each pokemonData.tipos as tipo}
-							<span class="px-2 sm:px-3 py-1 bg-slate-200 text-slate-700 text-xs sm:text-sm rounded-full font-medium">
-								{tipo.nombre}
-							</span>
+							<EtiquetaTipo tipo={tipo.nombre} tamaño="sm" />
 						{/each}
 					</div>
 				</div>

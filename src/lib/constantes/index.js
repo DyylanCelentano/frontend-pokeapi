@@ -1,4 +1,7 @@
-export const API_URL = 'https://backendpokeapi.up.railway.app/api';
+import { env } from '$env/dynamic/public';
+
+// Configuración de API con fallback para desarrollo
+export const API_URL = env.PUBLIC_VITE_API_URL
 export const TIPOS = {
 	normal: 1,
 	lucha: 2,

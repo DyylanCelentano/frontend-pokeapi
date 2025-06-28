@@ -44,15 +44,5 @@ IntroDex está pensado tanto para usuarios fanáticos de Pokémon como para eval
 
 El frontend consume los endpoints REST documentados en el backend (FastAPI), permitiendo la visualización y manipulación de los datos en tiempo real. Toda la lógica de negocio y persistencia de datos reside en el backend, mientras que el frontend se encarga de la experiencia de usuario.
 
-## Instalación y ejecución
-
-1. Clonar este repositorio.
-2. Instalar dependencias con `npm install`.
-3. Iniciar el servidor de desarrollo con `npm run dev`.
-4. Acceder a la aplicación en `http://localhost:5173`.
-
-> Para el correcto funcionamiento, asegúrate de tener el backend desplegado y accesible. La URL del backend puede configurarse en los archivos de constantes del frontend.
-
----
 
 Este proyecto es una muestra de integración de conocimientos adquiridos en bases de datos, desarrollo backend y frontend, y trabajo colaborativo. ¡Gracias por tu interés en IntroDex!

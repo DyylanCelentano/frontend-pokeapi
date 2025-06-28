@@ -1,24 +1,36 @@
 <script>
 	import EmptyState from '$lib/components/EmptyState.svelte';
 	import Pagination from '$lib/components/Pagination.svelte';
-	import { showLoading } from '$lib/stores/loading.js';
-	export let data;
-	//lo busque y es la forma correcta de usar el data $props
-
-	let search = '';
-	//variable reactiva?
-	$: movimientosFiltrados = data.movimientos.filter((m) =>
-		m.nombre.toLowerCase().includes(search.toLowerCase())
-	);
-	//el lugar donde encontre este tipo de typeahead dice usar este comando
-	//usando el filter, movimientosFiltrados es una declaracion reactiva
-	//osea que con cada cambio (en este caso de search) va a actualizarse
-	//se recorre data.movimientos y como un for, cada paso se llama m
-	//y despues el resto es bastante obvio lo que hace
+	import { hideLoading, showLoading } from '$lib/stores/loading.js';
+	import { onMount } from 'svelte';
 	
+	let { data } = $props();
+
+	// Ocultar loading cuando la página se monta
+	onMount(() => {
+		hideLoading();
+	});
+
+	// Ocultar loading cuando los datos cambian (reactivo)
+	$effect(() => {
+		if (data.movimientos) {
+			hideLoading();
+		}
+	});
+
+	// Timeout de seguridad para ocultar loading si tarda mucho
+	let loadingTimeout;
+
 	function buscarMovimientos() {
 		showLoading('Buscando movimientos...');
-		// El loading se ocultará cuando la página se recargue
+		
+		// Timeout de seguridad: ocultar loading después de 10 segundos máximo
+		clearTimeout(loadingTimeout);
+		loadingTimeout = setTimeout(() => {
+			hideLoading();
+		}, 10000);
+		
+		// El loading se ocultará automáticamente cuando los datos cambien
 	}
 	
 	function verDetalleMovimiento(movimientoId) {
@@ -46,15 +58,24 @@
 			<div class="bg-white/90 rounded-2xl shadow-lg border border-slate-200 p-8 mb-10">
 				<div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
 					<h2 class="text-2xl font-bold text-blue-700">Filtros</h2>
-					<button 
-						type="button"
-						class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md font-medium transition-colors text-sm"
-						onclick={() => window.location.href = window.location.pathname}
-					>
-						Limpiar filtros
-					</button>
+					<div class="flex gap-2">
+						<button 
+							type="submit"
+							form="form-filtros-movimientos"
+							class="bg-gradient-to-r from-blue-600 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-bold transition-all shadow-md"
+						>
+							Buscar
+						</button>
+						<button 
+							type="button"
+							class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md font-medium transition-colors text-sm"
+							onclick={() => window.location.href = window.location.pathname}
+						>
+							Limpiar filtros
+						</button>
+					</div>
 				</div>
-				<form method="GET" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6" onsubmit={buscarMovimientos}>
+				<form method="GET" id="form-filtros-movimientos" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" onsubmit={buscarMovimientos}>
 					<div class="flex flex-col gap-2">
 						<label for="nombre_parcial" class="text-sm font-medium text-slate-700">Buscar por nombre</label>
 						<input 
@@ -96,14 +117,6 @@
 							<option value="oscuro">Oscuro</option>
 						</select>
 					</div>
-					<div class="flex flex-col gap-2 justify-end">
-						<button 
-							type="submit"
-							class="bg-gradient-to-r from-blue-600 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-bold transition-all shadow-md w-full"
-						>
-							Buscar
-						</button>
-					</div>
 				</form>
 				<!-- Filtros activos -->
 				{#if data.query || data.query2}
@@ -127,7 +140,7 @@
 			<Pagination currentPage={data.currentPage} pageSize={data.pageSize} hasMore={data.hasMore} />
 			<!-- Lista de movimientos en formato de cards -->
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-				{#each movimientosFiltrados as movimiento}
+				{#each data.movimientos as movimiento}
 					<div class="bg-white/90 rounded-2xl border border-slate-200 shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group relative flex flex-col">
 						<!-- Header de la card -->
 						<div class="p-5 border-b border-slate-100 flex items-center justify-between gap-2 bg-gradient-to-r from-blue-100 to-pink-100">
@@ -199,8 +212,8 @@
 					<div class="col-span-full">
 						<EmptyState 
 							type="movimientos"
-							searchTerm={search}
-							hasFilters={!!search}
+							searchTerm={data.query || ''}
+							hasFilters={!!(data.query || data.query2)}
 							icon="⚔️"
 						/>
 					</div>

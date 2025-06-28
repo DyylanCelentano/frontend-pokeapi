@@ -1,5 +1,5 @@
 import { API_URL, TIPOS } from '$lib/constantes/index';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export async function load({ url }) {
 	const apiUrl = new URL(`${API_URL}/pokemon`);
@@ -28,18 +28,16 @@ export async function load({ url }) {
 }
 
 export const actions = {
-	filter: async ({ request }) => {
+	filter: async ({ request, url }) => {
 		const data = await request.formData();
-		const { nombre, tipo } = data;
-		let apiUrl = new URL(`${API_URL}/pokemon`);
-
-		if (nombre) apiUrl.searchParams.set('nombre_parcial', nombre);
-		if (tipo) apiUrl.searchParams.set('tipo', TIPOS[tipo]);
-
-		const response = await fetch(apiUrl);
-
-		if (!response.ok) {
-			error(`Response status: ${response.status}`);
-		}
+		const nombre = data.get('nombre') || '';
+		const tipo = data.get('tipo') || '';
+		
+		let redirectUrl = new URL('/pokemones', url.origin);
+		
+		if (nombre) redirectUrl.searchParams.set('nombre', nombre);
+		if (tipo) redirectUrl.searchParams.set('tipo', tipo);
+		
+		throw redirect(302, redirectUrl.toString());
 	}
 };

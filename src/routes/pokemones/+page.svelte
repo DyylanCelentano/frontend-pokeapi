@@ -5,7 +5,7 @@
 	import Pagination from '$lib/components/Pagination.svelte';
 	import TarjetaPokemon from '$lib/components/TarjetaPokemon.svelte';
 	import { NOMBRES_TIPOS } from '$lib/constantes';
-	import { showLoading } from '$lib/stores/loading.js';
+	import { hideLoading, showLoading } from '$lib/stores/loading.js';
 	import { onMount } from 'svelte';
 	import './page.css';
 
@@ -13,11 +13,22 @@
 	let terminoBusqueda = $state('');
 	let tipoSeleccionado = $state('');
 
-	// Inicializar filtros desde la URL
+	// Inicializar filtros desde la URL y ocultar loading
 	onMount(() => {
 		terminoBusqueda = $page.url.searchParams.get('nombre') || '';
 		tipoSeleccionado = $page.url.searchParams.get('tipo') || '';
+		hideLoading();
 	});
+
+	// Ocultar loading cuando los datos cambian (reactivo)
+	$effect(() => {
+		if (data.pokemones) {
+			hideLoading();
+		}
+	});
+
+	// Timeout de seguridad para ocultar loading si tarda mucho
+	let loadingTimeout;
 
 	const limpiarFiltros = (e) => {
 		const formElement = document.getElementById('form-filtrar-pokemon');
@@ -27,8 +38,15 @@
 	
 	const buscarPokemon = (e) => {
 		showLoading('Buscando Pokémon...');
+		
+		// Timeout de seguridad: ocultar loading después de 10 segundos máximo
+		clearTimeout(loadingTimeout);
+		loadingTimeout = setTimeout(() => {
+			hideLoading();
+		}, 10000);
+		
 		// El formulario se enviará normalmente después de mostrar el loading
-		// El loading se ocultará cuando la página se recargue
+		// El loading se ocultará automáticamente cuando los datos cambien
 	};
 </script>
 
@@ -65,7 +83,7 @@
 					</div>
 				</div>
 				<form action="?/filter" id="form-filtrar-pokemon" onsubmit={buscarPokemon}>
-					<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
 						<div class="flex flex-col gap-2">
 							<label for="nombre" class="text-sm font-medium text-slate-700">Buscar por nombre</label>
 							<input

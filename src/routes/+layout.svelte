@@ -12,13 +12,17 @@
   });
 </script>
 
-<div class="min-h-screen flex flex-col">
+<svelte:head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</svelte:head>
+
+<div class="min-h-screen flex flex-col overflow-x-hidden bg-gray-800">
   <!-- Header -->
   <Encabezado />
 
 
   <!-- Contenido principal -->
-  <main class="flex-1 relative">
+  <main class="flex-1 relative overflow-x-hidden">
     {@render children?.()}
     
     <!-- Loading overlay -->
@@ -30,7 +34,6 @@
       </div>
     {/if}
   </main>
-  
 
   <footer class="bg-slate-800 text-white py-12 mt-12">
 

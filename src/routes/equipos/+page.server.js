@@ -1,5 +1,5 @@
-import { API_URL } from '$lib/constantes/index.js';
 import { error } from '@sveltejs/kit';
+import { API_URL } from '$lib/constantes/index.js';
 
 export async function load({ url }) {
     const query = url.searchParams.get('nombre_parcial') || '';
@@ -39,7 +39,7 @@ export const actions = {
 
         const payload = { nombre, id_generacion };
 
-        let url = new URL(`${API_URL}/equipos`)
+        let url = new URL(`${API_URL}/equipos/`)
         //console.log(payload);
         const response = await fetch(url, {
             method: 'POST',

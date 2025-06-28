@@ -14,11 +14,11 @@
 <div
 	class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
 >
-	<div class="relative bg-gradient-to-br from-slate-50 to-slate-200 p-6 text-center">
+	<div class="relative bg-gradient-to-br from-slate-50 to-slate-200 p-4 sm:p-6 text-center">
 		<img
 			src={pokemon.imagen || `/placeholder.svg?height=120&width=120`}
 			alt={pokemon.nombre}
-			class="w-30 h-30 object-contain mx-auto drop-shadow-md"
+			class="w-24 h-24 sm:w-30 sm:h-30 object-contain mx-auto drop-shadow-md"
 		/>
 		<div
 			class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-semibold text-slate-500"
@@ -27,8 +27,8 @@
 		</div>
 	</div>
 
-	<div class="p-4">
-		<h3 class="text-lg font-bold text-slate-800 mb-3 text-center">{pokemon.nombre}</h3>
+	<div class="p-3 sm:p-4">
+		<h3 class="text-base sm:text-lg font-bold text-slate-800 mb-3 text-center">{pokemon.nombre}</h3>
 
 		<div class="flex flex-wrap justify-center gap-2 mb-4">
 			{#each pokemon.tipos as tipo}

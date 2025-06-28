@@ -91,19 +91,19 @@
 	{/if}
 	
 	{#if pokemonData}
-		<div class="mt-4 p-6 bg-white rounded-lg border shadow-sm">
-			<div class="flex flex-col lg:flex-row gap-6">
+		<div class="mt-4 p-4 sm:p-6 bg-white rounded-lg border shadow-sm">
+			<div class="flex flex-col lg:flex-row gap-4 sm:gap-6">
 				<!-- Imagen y información básica -->
 				<div class="flex-shrink-0">
 					<img 
 						src={pokemonData.imagen} 
 						alt={pokemonData.nombre}
-						class="w-32 h-32 mx-auto"
+						class="w-24 h-24 sm:w-32 sm:h-32 mx-auto"
 					/>
-					<h4 class="font-bold text-2xl capitalize text-center mt-2">{pokemonData.nombre}</h4>
-					<div class="flex gap-2 mt-2 justify-center">
+					<h4 class="font-bold text-xl sm:text-2xl capitalize text-center mt-2">{pokemonData.nombre}</h4>
+					<div class="flex flex-wrap gap-2 mt-2 justify-center">
 						{#each pokemonData.tipos as tipo}
-							<span class="px-3 py-1 bg-slate-200 text-slate-700 text-sm rounded-full font-medium">
+							<span class="px-2 sm:px-3 py-1 bg-slate-200 text-slate-700 text-xs sm:text-sm rounded-full font-medium">
 								{tipo.nombre}
 							</span>
 						{/each}

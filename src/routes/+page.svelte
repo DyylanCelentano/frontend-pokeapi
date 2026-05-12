@@ -6,96 +6,116 @@
 
 	const accionesRapidas = [
 		{
-			titulo: 'Buscar Pokémon',
-			descripcion: 'Encuentra cualquier Pokémon por nombre o tipo',
-			icono: '🔍',
+			titulo: 'Buscar Pokemon',
+			descripcion: 'Encuentra cualquier Pokemon por nombre o tipo',
+			icono: 'search',
 			enlace: '/pokemones'
 		},
 		{
 			titulo: 'Explorar Movimientos',
 			descripcion: 'Descubre todos los movimientos disponibles',
-			icono: '💫',
+			icono: 'bolt',
 			enlace: '/movimientos'
 		},
 		{
 			titulo: 'Ver Equipos',
 			descripcion: 'Explora equipos ya creados',
-			icono: '👥',
+			icono: 'users',
 			enlace: '/equipos'
 		}
 	];
+	
+	const iconos = {
+		search: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`,
+		bolt: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg>`,
+		users: `<svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`
+	};
 </script>
 
 <svelte:head>
-	<title>PokeAPI</title>
+	<title>IntroDex - Pokemon Database</title>
 </svelte:head>
 
-<div class="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+<div class="min-h-screen bg-[var(--color-bg-primary)]">
 	<main class="flex-1">
-		<!-- Sección de acciones rápidas -->
-		<section class="py-8 sm:py-12">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<h2 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 mb-16 text-center drop-shadow-l pb-8">
-					¿Qué te gustaría hacer?
-				</h2>
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-8">
-					<!-- Contenedor acciones -->
-
+		<!-- Hero Section -->
+		<section class="py-16 sm:py-24 relative overflow-hidden">
+			<!-- Subtle gradient orbs -->
+			<div class="absolute top-0 left-1/4 w-96 h-96 bg-[var(--color-accent)]/5 rounded-full blur-3xl"></div>
+			<div class="absolute bottom-0 right-1/4 w-96 h-96 bg-[var(--tipo-dragon)]/5 rounded-full blur-3xl"></div>
+			
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+				<div class="text-center mb-16">
+					<h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-[var(--color-text-primary)] mb-6 tracking-tight">
+						Que te gustaria hacer?
+					</h1>
+					<p class="text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto">
+						Explora la base de datos completa de Pokemon, movimientos y crea tus propios equipos.
+					</p>
+				</div>
+				
+				<!-- Action Cards -->
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
 					{#each accionesRapidas as accion}
 						<a
 							href={accion.enlace}
-							class="bg-white/90 rounded-2xl p-6 text-center border border-slate-200 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 group shadow-lg"
+							class="group bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6 transition-all duration-300 hover:border-[var(--color-border-focus)] hover:shadow-lg hover:-translate-y-1"
 						>
-							<div class="text-5xl mb-4 block">
-								{accion.icono}
+							<div class="w-14 h-14 rounded-xl bg-[var(--color-accent-muted)] flex items-center justify-center mb-5 text-[var(--color-accent)] group-hover:bg-[var(--color-accent)] group-hover:text-white transition-all duration-300">
+								{@html iconos[accion.icono]}
 							</div>
 
-							<h3 class="text-xl font-bold mb-2 text-slate-800 group-hover:text-blue-600">
+							<h3 class="text-lg font-semibold text-[var(--color-text-primary)] mb-2 group-hover:text-[var(--color-accent)] transition-colors">
 								{accion.titulo}
 							</h3>
 
-							<p class="text-slate-600 text-base">
+							<p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">
 								{accion.descripcion}
 							</p>
+							
+							<div class="mt-4 flex items-center gap-2 text-sm text-[var(--color-text-muted)] group-hover:text-[var(--color-accent)] transition-colors">
+								<span>Explorar</span>
+								<svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<polyline points="9,18 15,12 9,6"/>
+								</svg>
+							</div>
 						</a>
 					{/each}
 				</div>
 			</div>
 		</section>
 
-		<!-- Pokemones destacados -->
-		<section class="py-8 sm:py-12">
+		<!-- Featured Pokemon -->
+		<section class="py-12 sm:py-16 border-t border-[var(--color-border)]">
 			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div
-					class="flex justify-between items-center mb-8 sm:mb-12 flex-col md:flex-row gap-4 text-center md:text-left"
-				>
-					<!-- Arriba -->
-
-					<h2 class="text-3xl font-bold text-slate-800">Pokémon Destacados</h2>
+				<div class="flex justify-between items-center mb-10 flex-col md:flex-row gap-4">
+					<div>
+						<h2 class="text-2xl font-bold text-[var(--color-text-primary)]">Pokemon Destacados</h2>
+						<p class="text-[var(--color-text-secondary)] mt-1">Descubre algunos Pokemon populares</p>
+					</div>
 
 					<a
 						href="/pokemones"
-						class="inline-flex items-center gap-2 px-4 sm:px-6 py-2 bg-white/90 text-slate-800 border border-slate-200 rounded-lg font-medium hover:bg-slate-50 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200"
+						class="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--color-bg-card)] border border-[var(--color-border)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-[var(--color-border-focus)] rounded-lg font-medium transition-all duration-200 text-sm"
 					>
 						Ver todos
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="9,18 15,12 9,6"/>
+						</svg>
 					</a>
 				</div>
-				<!-- Arriba -->
 
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-					<!-- Lista pokemones -->
-
 					{#each data.pokemones as pokemon}
 						<TarjetaPokemon {pokemon} />
 					{/each}
 				</div>
-				<!-- Lista pokemones -->
 			</div>
 		</section>
 
-		<!-- Sección de prueba del loading -->
-		<section class="py-8 sm:py-12">
-			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<!-- Random Pokemon Section -->
+		<section class="py-12 sm:py-16 border-t border-[var(--color-border)]">
+			<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
 				<PokemonAleatorio />
 			</div>
 		</section>

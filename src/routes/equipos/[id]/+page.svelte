@@ -6,7 +6,7 @@
 
 	let { data } = $props();
 
-	// Variables para formularios
+	// Form variables
 	let idPokemonNuevo = $state('');
 	let apodoNuevo = $state('');
 	let integranteParaMovimiento = $state('');
@@ -14,11 +14,10 @@
 	let integranteParaEditar = $state('');
 	let nuevoApodo = $state('');
 
-	// Variables de estado generales
+	// Status messages
 	let mensajeError = $state('');
 	let mensajeExito = $state('');
 
-	// Limpiar mensajes después de 5 segundos
 	$effect(() => {
 		if (mensajeError || mensajeExito) {
 			setTimeout(() => {
@@ -45,7 +44,7 @@
 
 	function validarLimiteIntegrantes() {
 		if (data.equipo.integrantes.length >= 6) {
-			mensajeError = 'Este equipo ya tiene el máximo de 6 integrantes.';
+			mensajeError = 'Este equipo ya tiene el maximo de 6 integrantes.';
 			return false;
 		}
 		return true;
@@ -53,7 +52,7 @@
 
 	function validarLimiteMovimientos(integrante) {
 		if (integrante.movimientos && integrante.movimientos.length >= 4) {
-			mensajeError = `${integrante.apodo} ya tiene el máximo de 4 movimientos.`;
+			mensajeError = `${integrante.apodo} ya tiene el maximo de 4 movimientos.`;
 			return false;
 		}
 		return true;
@@ -63,19 +62,15 @@
 		return data.equipo.integrantes.find((i) => i.id == id);
 	}
 
-	// Formatear movimientos para mostrar en tabla (máximo 4 columnas)
 	function obtenerMovimientosFormateados(integrante) {
 		const movimientos = integrante.movimientos || [];
 		const resultado = [null, null, null, null];
-
 		for (let i = 0; i < Math.min(movimientos.length, 4); i++) {
 			resultado[i] = movimientos[i];
 		}
-
 		return resultado;
 	}
 
-	// Validaciones específicas
 	function tieneMovimientoDuplicado(integrante, nuevoMovimientoId) {
 		return integrante.movimientos?.some((mov) => mov.id == nuevoMovimientoId) || false;
 	}
@@ -94,17 +89,14 @@
 	function manejarEnvioAgregarMovimiento() {
 		const integrante = obtenerIntegrantePorId(integranteParaMovimiento);
 		if (!integrante) {
-			mensajeError = 'Debe seleccionar un integrante válido.';
+			mensajeError = 'Debe seleccionar un integrante valido.';
 			return false;
 		}
-
 		if (!validarLimiteMovimientos(integrante)) return false;
-
 		if (tieneMovimientoDuplicado(integrante, movimientoSeleccionado)) {
 			mensajeError = 'Este integrante ya tiene ese movimiento.';
 			return false;
 		}
-
 		showLoading('Agregando movimiento...');
 		setTimeout(() => {
 			limpiarFormularioMovimiento();
@@ -119,7 +111,6 @@
 			mensajeError = 'Debe seleccionar un integrante para editar.';
 			return false;
 		}
-
 		showLoading('Editando integrante...');
 		setTimeout(() => {
 			limpiarFormularioEdicion();
@@ -136,39 +127,52 @@
 </script>
 
 <svelte:head>
-	<title>{data.equipo.nombre} - Equipos - PokéAPI</title>
+	<title>{data.equipo.nombre} - Equipos - IntroDex</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 text-lg py-8">
-	<div class="max-w-7xl mx-auto px-4">
+<div class="min-h-screen bg-[var(--color-bg-primary)] py-8">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 		<a
-			href="../"
-			class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors mb-6"
+			href="/equipos"
+			class="inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors mb-6 text-sm"
 		>
-			<span class="text-xl">←</span>
+			<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="15,18 9,12 15,6"/>
+			</svg>
 			Volver a Equipos
 		</a>
 
-		<!-- Header del equipo -->
-		<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
+		<!-- Team header -->
+		<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
 			<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 				<div class="flex-1">
-					<h1 class="text-3xl font-bold text-slate-800 mb-2">{data.equipo.nombre}</h1>
-					<div class="flex items-center gap-4 text-sm text-slate-600">
-						<span>📍 Generación {data.equipo.generacion.numero}</span>
-						<span>👥 {data.equipo.integrantes.length}/6 integrantes</span>
+					<h1 class="text-2xl font-bold text-[var(--color-text-primary)] mb-2">{data.equipo.nombre}</h1>
+					<div class="flex items-center gap-4 text-sm text-[var(--color-text-muted)]">
+						<span class="flex items-center gap-1">
+							<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"/>
+							</svg>
+							Generacion {data.equipo.generacion.numero}
+						</span>
+						<span class="flex items-center gap-1">
+							<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+								<circle cx="9" cy="7" r="4"/>
+							</svg>
+							{data.equipo.integrantes.length}/6 integrantes
+						</span>
 					</div>
 				</div>
 				
-				<!-- Barra de progreso del equipo -->
+				<!-- Progress bar -->
 				<div class="w-full lg:w-64">
-					<div class="flex justify-between text-sm text-slate-600 mb-2">
+					<div class="flex justify-between text-xs text-[var(--color-text-muted)] mb-2">
 						<span>Progreso del equipo</span>
 						<span>{data.equipo.integrantes.length}/6</span>
 					</div>
-					<div class="w-full bg-slate-200 rounded-full h-3">
+					<div class="w-full bg-[var(--color-bg-elevated)] rounded-full h-2">
 						<div 
-							class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
+							class="bg-[var(--color-accent)] h-2 rounded-full transition-all duration-500"
 							style="width: {(data.equipo.integrantes.length / 6) * 100}%"
 						></div>
 					</div>
@@ -176,47 +180,36 @@
 			</div>
 		</div>
 
-		<!-- Mensajes de estado -->
+		<!-- Status messages -->
 		{#if mensajeError}
-			<div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6">
-				<div class="flex items-center">
-					<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							fill-rule="evenodd"
-							d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-							clip-rule="evenodd"
-						></path>
-					</svg>
-					{mensajeError}
-				</div>
+			<div class="bg-[var(--color-error)]/10 border border-[var(--color-error)]/30 text-[var(--color-error)] px-4 py-3 rounded-lg mb-6 flex items-center gap-2 text-sm">
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<line x1="12" y1="8" x2="12" y2="12"/>
+					<line x1="12" y1="16" x2="12.01" y2="16"/>
+				</svg>
+				{mensajeError}
 			</div>
 		{/if}
 
 		{#if mensajeExito}
-			<div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md mb-6">
-				<div class="flex items-center">
-					<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							fill-rule="evenodd"
-							d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-							clip-rule="evenodd"
-						></path>
-					</svg>
-					{mensajeExito}
-				</div>
+			<div class="bg-[var(--color-success)]/10 border border-[var(--color-success)]/30 text-[var(--color-success)] px-4 py-3 rounded-lg mb-6 flex items-center gap-2 text-sm">
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="20,6 9,17 4,12"/>
+				</svg>
+				{mensajeExito}
 			</div>
 		{/if}
 
-		<h3 class="text-2xl font-bold text-slate-800 mb-6">
+		<h3 class="text-lg font-semibold text-[var(--color-text-primary)] mb-6">
 			Integrantes de {data.equipo.nombre}
-			<span class="text-sm font-normal text-slate-600">({data.equipo.integrantes.length}/6)</span>
+			<span class="text-sm font-normal text-[var(--color-text-muted)]">({data.equipo.integrantes.length}/6)</span>
 		</h3>
 
 		{#if data.equipo.integrantes.length === 0}
 			<EmptyState
 				title="Sin integrantes"
-				message="Este equipo aún no tiene integrantes. ¡Comienza agregando tu primer Pokémon!"
-				icon="👥"
+				message="Este equipo aun no tiene integrantes. Comienza agregando tu primer Pokemon!"
 				suggestions={[
 					"Usa el formulario de abajo para agregar un nuevo integrante",
 					"Cada equipo puede tener hasta 6 integrantes",
@@ -224,21 +217,21 @@
 				]}
 			/>
 		{:else}
-			<!-- Lista de integrantes en formato de cards -->
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<!-- Team members grid -->
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
 				{#each data.equipo.integrantes as integrante}
 					{@const movimientosFormateados = obtenerMovimientosFormateados(integrante)}
-					<div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
-						<!-- Header con info básica del integrante -->
-						<div class="p-4 sm:p-6 border-b border-slate-100">
-							<div class="flex items-start justify-between mb-4">
+					<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl overflow-hidden hover:border-[var(--color-border-focus)] transition-colors">
+						<!-- Header -->
+						<div class="p-4 border-b border-[var(--color-border)]">
+							<div class="flex items-start justify-between">
 								<div class="flex-1">
-									<h4 class="text-lg font-bold text-slate-800 mb-1">
+									<h4 class="text-base font-semibold text-[var(--color-text-primary)] mb-1">
 										{integrante.apodo}
 									</h4>
 									<a
 										href="/pokemones/{integrante.pokemon.id}"
-										class="text-blue-600 hover:text-blue-800 font-medium text-sm"
+										class="text-[var(--color-accent)] hover:underline text-sm"
 									>
 										{integrante.pokemon.nombre}
 									</a>
@@ -247,22 +240,18 @@
 									<img
 										src={integrante.pokemon.imagen}
 										alt={integrante.pokemon.nombre}
-										class="w-16 h-16 object-contain rounded-lg bg-slate-50"
+										class="w-14 h-14 object-contain rounded-lg bg-[var(--color-bg-elevated)]"
 									/>
 									<form action="?/eliminar_integrante" method="POST" onsubmit={manejarEliminarIntegrante}>
 										<input type="hidden" name="integrante_id" value={integrante.id} />
 										<input type="hidden" name="id_equipo" value={data.equipo.id} />
 										<button
-											class="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50 transition-colors"
-											aria-label="Eliminar integrante {integrante.apodo}"
+											class="text-[var(--color-error)] hover:bg-[var(--color-error)]/10 p-2 rounded-lg transition-colors"
 											title="Eliminar {integrante.apodo}"
 										>
-											<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-												<path
-													fill-rule="evenodd"
-													d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2v1a1 1 0 001 1h6a1 1 0 001-1V3a2 2 0 012 2v6.5l1.707 1.707A1 1 0 0117 14H3a1 1 0 01-.707-1.707L4 10.5V5zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-													clip-rule="evenodd"
-												></path>
+											<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+												<polyline points="3,6 5,6 21,6"/>
+												<path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6M8,6V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2V6"/>
 											</svg>
 										</button>
 									</form>
@@ -270,51 +259,42 @@
 							</div>
 						</div>
 						
-						<!-- Movimientos -->
-						<div class="p-4 sm:p-6">
-							<h5 class="text-sm font-semibold text-slate-700 mb-3">Movimientos ({integrante.movimientos.length}/4)</h5>
-							<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+						<!-- Moves -->
+						<div class="p-4">
+							<h5 class="text-xs font-medium text-[var(--color-text-muted)] mb-3 uppercase tracking-wider">Movimientos ({integrante.movimientos.length}/4)</h5>
+							<div class="grid grid-cols-2 gap-2">
 								{#each movimientosFormateados as movimiento, i}
-									<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+									<div class="flex items-center justify-between p-2.5 bg-[var(--color-bg-elevated)] rounded-lg">
 										{#if movimiento}
-											<div class="flex-1">
-												<span class="text-sm font-medium text-slate-800">{movimiento.nombre}</span>
-											</div>
+											<span class="text-sm text-[var(--color-text-secondary)] truncate">{movimiento.nombre}</span>
 											<a
 												href="/movimientos/{movimiento.id}"
-												class="w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors text-white flex items-center justify-center ml-2"
-												aria-label="Ver detalles de {movimiento.nombre}"
+												class="w-7 h-7 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] rounded-md transition-colors text-white flex items-center justify-center flex-shrink-0 ml-2"
 												title="Ver {movimiento.nombre}"
 											>
-												<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-													<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-													<path
-														fill-rule="evenodd"
-														d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-														clip-rule="evenodd"
-													></path>
+												<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+													<circle cx="12" cy="12" r="3"/>
 												</svg>
 											</a>
 										{:else}
-											<div class="flex-1">
-												<span class="text-slate-400 italic text-sm">Espacio libre</span>
-											</div>
-											<div class="w-8 h-8 bg-slate-200 rounded-md flex items-center justify-center">
-												<span class="text-slate-400 text-xs">+</span>
+											<span class="text-[var(--color-text-muted)] text-sm italic">Espacio libre</span>
+											<div class="w-7 h-7 bg-[var(--color-bg-primary)] rounded-md flex items-center justify-center">
+												<span class="text-[var(--color-text-muted)] text-xs">+</span>
 											</div>
 										{/if}
 									</div>
 								{/each}
 							</div>
 							
-							<!-- Progreso de movimientos -->
-							<div class="mt-4">
-								<div class="flex justify-between text-xs text-slate-600 mb-1">
-									<span>Movimientos aprendidos</span>
+							<!-- Moves progress -->
+							<div class="mt-3">
+								<div class="flex justify-between text-xs text-[var(--color-text-muted)] mb-1">
+									<span>Movimientos</span>
 									<span>{integrante.movimientos.length}/4</span>
 								</div>
-								<div class="w-full bg-slate-200 rounded-full h-2">
-									<div class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: {(integrante.movimientos.length / 4) * 100}%"></div>
+								<div class="w-full bg-[var(--color-bg-primary)] rounded-full h-1">
+									<div class="bg-[var(--color-success)] h-1 rounded-full transition-all duration-300" style="width: {(integrante.movimientos.length / 4) * 100}%"></div>
 								</div>
 							</div>
 						</div>
@@ -323,62 +303,36 @@
 			</div>
 		{/if}
 
-		<!-- Grid de tres formularios -->
-		<div class="grid md:grid-cols-3 gap-6 mt-8">
-			<!-- 1. Formulario: Crear nuevo integrante -->
-			<section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-				<h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-					<span
-						class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-3"
-						>1</span
-					>
+		<!-- Forms grid -->
+		<div class="grid md:grid-cols-3 gap-4 mt-8">
+			<!-- 1. Create member form -->
+			<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-5">
+				<h2 class="text-base font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+					<span class="w-6 h-6 bg-[var(--color-accent)] text-white rounded-full flex items-center justify-center text-xs">1</span>
 					Crear Integrante
 				</h2>
 
 				{#if data.equipo.integrantes.length >= 6}
-					<div
-						class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 rounded-md text-sm"
-					>
-						<div class="flex items-center">
-							<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path
-									fill-rule="evenodd"
-									d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-									clip-rule="evenodd"
-								></path>
-							</svg>
-							Equipo completo (6/6)
-						</div>
+					<div class="bg-[var(--color-warning)]/10 border border-[var(--color-warning)]/30 text-[var(--color-warning)] px-3 py-2 rounded-lg text-sm">
+						Equipo completo (6/6)
 					</div>
 				{:else}
-					<form
-						action="?/agregar_integrante"
-						method="POST"
-						class="space-y-4"
-						onsubmit={manejarEnvioCrearIntegrante}
-					>
+					<form action="?/agregar_integrante" method="POST" class="space-y-3" onsubmit={manejarEnvioCrearIntegrante}>
 						<input type="hidden" name="id_equipo" value={data.equipo.id} />
 						<input type="hidden" name="id_pokemon" bind:value={idPokemonNuevo} />
 						<div>
-							<label for="pokemon-nuevo" class="block text-sm font-medium text-slate-700 mb-2">
-								Pokémon <span class="text-red-500">*</span>
-							</label>
-							<div id="pokemon-nuevo">
-								<Typeahead
-									endpoint="{API_URL}/pokemon/"
-									placeholder="Buscar Pokémon..."
-									on:select={(event) => {
-										idPokemonNuevo = event.detail.result.id;
-										mensajeError = '';
-									}}
-								/>
-							</div>
+							<label for="pokemon-nuevo" class="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Pokemon</label>
+							<Typeahead
+								endpoint="{API_URL}/pokemon/"
+								placeholder="Buscar Pokemon..."
+								on:select={(event) => {
+									idPokemonNuevo = event.detail.result.id;
+									mensajeError = '';
+								}}
+							/>
 						</div>
-
 						<div>
-							<label for="apodo-nuevo" class="block text-sm font-medium text-slate-700 mb-2">
-								Apodo <span class="text-red-500">*</span>
-							</label>
+							<label for="apodo-nuevo" class="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Apodo</label>
 							<input
 								id="apodo-nuevo"
 								type="text"
@@ -386,140 +340,104 @@
 								bind:value={apodoNuevo}
 								required
 								maxlength="50"
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm h-10"
+								class="w-full px-3 py-2 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)] transition-all"
 								placeholder="Apodo del integrante"
 							/>
 						</div>
-
 						<button
 							type="submit"
 							disabled={!idPokemonNuevo || !apodoNuevo}
-							class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-md transition-colors text-sm"
+							class="w-full bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] disabled:bg-[var(--color-bg-hover)] disabled:text-[var(--color-text-muted)] disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-lg transition-colors text-sm"
 						>
 							Agregar Integrante
 						</button>
 					</form>
 				{/if}
-			</section>
+			</div>
 
-			<!-- 2. Formulario: Agregar movimiento -->
-			<section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-				<h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-					<span
-						class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm mr-3"
-						>2</span
-					>
+			<!-- 2. Add move form -->
+			<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-5">
+				<h2 class="text-base font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+					<span class="w-6 h-6 bg-[var(--color-success)] text-white rounded-full flex items-center justify-center text-xs">2</span>
 					Agregar Movimiento
 				</h2>
 
 				{#if data.equipo.integrantes.length === 0}
-					<div class="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm">
+					<div class="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text-muted)] px-3 py-2 rounded-lg text-sm">
 						Sin integrantes en el equipo
 					</div>
 				{:else}
-					<form
-						action="?/agregar_movimiento"
-						method="POST"
-						class="space-y-4"
-						onsubmit={manejarEnvioAgregarMovimiento}
-					>
-						<!-- CAMPO OCULTO PARA ID DEL EQUIPO -->
+					<form action="?/agregar_movimiento" method="POST" class="space-y-3" onsubmit={manejarEnvioAgregarMovimiento}>
 						<input type="hidden" name="id_equipo" value={data.equipo.id} />
 						<input type="hidden" name="id_movimiento" bind:value={movimientoSeleccionado} />
 						<div>
-							<label for="integrante-movimiento" class="block text-sm font-medium text-slate-700 mb-2">
-								Integrante <span class="text-red-500">*</span>
-							</label>
+							<label for="integrante-movimiento" class="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Integrante</label>
 							<select
 								id="integrante-movimiento"
 								name="id_integrante"
 								bind:value={integranteParaMovimiento}
 								required
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm h-10"
+								class="w-full px-3 py-2 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--color-success)] focus:ring-2 focus:ring-[var(--color-success)]/20 transition-all"
 							>
 								<option value="">Selecciona un integrante</option>
 								{#each data.equipo.integrantes as integrante}
-									<option value={integrante.id}>
-										{integrante.apodo} - {integrante.pokemon.nombre}
-									</option>
+									<option value={integrante.id}>{integrante.apodo} - {integrante.pokemon.nombre}</option>
 								{/each}
 							</select>
 						</div>
-
 						<div>
-							<label for="movimiento" class="block text-sm font-medium text-slate-700 mb-2">
-								Movimiento <span class="text-red-500">*</span>
-							</label>
-							<div id="movimiento">
-								<Typeahead
-									endpoint="{API_URL}/movimientos/"
-									placeholder="Buscar movimiento..."
-									on:select={(event) => {
-										movimientoSeleccionado = event.detail.result.id;
-										mensajeError = '';
-									}}
-								/>
-							</div>
+							<label for="movimiento" class="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Movimiento</label>
+							<Typeahead
+								endpoint="{API_URL}/movimientos/"
+								placeholder="Buscar movimiento..."
+								on:select={(event) => {
+									movimientoSeleccionado = event.detail.result.id;
+									mensajeError = '';
+								}}
+							/>
 						</div>
-
 						<button
 							type="submit"
 							disabled={!integranteParaMovimiento || !movimientoSeleccionado}
-							class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-md transition-colors text-sm"
+							class="w-full bg-[var(--color-success)] hover:bg-[var(--color-success)]/80 disabled:bg-[var(--color-bg-hover)] disabled:text-[var(--color-text-muted)] disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-lg transition-colors text-sm"
 						>
 							Agregar Movimiento
 						</button>
 					</form>
 				{/if}
-			</section>
+			</div>
 
-			<!-- 3. Formulario: Editar integrante -->
-			<section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-				<h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-					<span
-						class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm mr-3"
-						>3</span
-					>
+			<!-- 3. Edit member form -->
+			<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-5">
+				<h2 class="text-base font-semibold text-[var(--color-text-primary)] mb-4 flex items-center gap-2">
+					<span class="w-6 h-6 bg-[var(--tipo-dragon)] text-white rounded-full flex items-center justify-center text-xs">3</span>
 					Editar Integrante
 				</h2>
 
 				{#if data.equipo.integrantes.length === 0}
-					<div class="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm">
+					<div class="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] text-[var(--color-text-muted)] px-3 py-2 rounded-lg text-sm">
 						Sin integrantes en el equipo
 					</div>
 				{:else}
-					<form
-						action="?/editar_integrante"
-						method="POST"
-						class="space-y-4"
-						onsubmit={manejarEnvioEditarIntegrante}
-					>
-						<!-- CAMPO OCULTO PARA ID DEL EQUIPO -->
+					<form action="?/editar_integrante" method="POST" class="space-y-3" onsubmit={manejarEnvioEditarIntegrante}>
 						<input type="hidden" name="id_equipo" value={data.equipo.id} />
 						<div>
-							<label for="integrante-editar" class="block text-sm font-medium text-slate-700 mb-2">
-								Integrante <span class="text-red-500">*</span>
-							</label>
+							<label for="integrante-editar" class="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Integrante</label>
 							<select
 								id="integrante-editar"
 								name="id_integrante"
 								bind:value={integranteParaEditar}
 								required
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm h-10"
+								class="w-full px-3 py-2 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-primary)] focus:outline-none focus:border-[var(--tipo-dragon)] focus:ring-2 focus:ring-[var(--tipo-dragon)]/20 transition-all"
 							>
 								<option value="">Selecciona un integrante</option>
 								{#each data.equipo.integrantes as integrante}
-									<option value={integrante.id}>
-										{integrante.apodo} - {integrante.pokemon.nombre}
-									</option>
+									<option value={integrante.id}>{integrante.apodo} - {integrante.pokemon.nombre}</option>
 								{/each}
 							</select>
 						</div>
-
 						<div>
-							<label for="nuevo-apodo-editar" class="block text-sm font-medium text-slate-700 mb-2">
-								Nuevo apodo <span class="text-red-500">*</span>
-							</label>
+							<label for="nuevo-apodo-editar" class="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Nuevo apodo</label>
 							<input
 								id="nuevo-apodo-editar"
 								type="text"
@@ -527,21 +445,20 @@
 								bind:value={nuevoApodo}
 								required
 								maxlength="50"
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm h-10"
+								class="w-full px-3 py-2 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--tipo-dragon)] focus:ring-2 focus:ring-[var(--tipo-dragon)]/20 transition-all"
 								placeholder="Nuevo apodo"
 							/>
 						</div>
-
 						<button
 							type="submit"
 							disabled={!integranteParaEditar || !nuevoApodo}
-							class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-md transition-colors text-sm"
+							class="w-full bg-[var(--tipo-dragon)] hover:bg-[var(--tipo-dragon)]/80 disabled:bg-[var(--color-bg-hover)] disabled:text-[var(--color-text-muted)] disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-lg transition-colors text-sm"
 						>
 							Editar Integrante
 						</button>
 					</form>
 				{/if}
-			</section>
+			</div>
 		</div>
 	</div>
 </div>

@@ -2,7 +2,6 @@
 	import { createEventDispatcher, onDestroy } from 'svelte';
 	const dispatch = createEventDispatcher();
 
-	//export let data;
 	export let placeholder;
 	export let endpoint;
 	export let minQueryLength = 2;
@@ -34,17 +33,15 @@
 			});
 			
 			if (!response.ok) {
-				console.error('Error fetching results:', response.status, response.statusText);
 				results = [];
 				showDropdown = false;
 				return;
 			}
 
 			const data = await response.json();
-			results = data.results || data || []; // Manejar diferentes estructuras de respuesta
+			results = data.results || data || [];
 			showDropdown = results.length > 0;
 		} catch (error) {
-			console.error('Error in fetchResults:', error);
 			results = [];
 			showDropdown = false;
 		}
@@ -63,82 +60,33 @@
 	onDestroy(() => clearTimeout(timeout));
 </script>
 
-<div class="typeahead-container">
-	<input
-		class="typeahead-input"
-		type="text"
-		bind:value={query}
-		oninput={onInput}
-		onblur={handleBlur}
-		{placeholder}
-		autocomplete="off"
-	/>
+<div class="relative w-full">
+	<div class="relative">
+		<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<circle cx="11" cy="11" r="8"/>
+			<line x1="21" y1="21" x2="16.65" y2="16.65"/>
+		</svg>
+		<input
+			class="w-full h-10 pl-10 pr-4 bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg text-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-muted)] transition-all"
+			type="text"
+			bind:value={query}
+			oninput={onInput}
+			onblur={handleBlur}
+			{placeholder}
+			autocomplete="off"
+		/>
+	</div>
 
 	{#if showDropdown}
-		<div class="dropdown">
+		<div class="absolute w-full mt-1 max-h-52 overflow-y-auto bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-lg shadow-lg z-50">
 			{#each results as result}
-				<div
-					class="dropdown-item"
-					role="button"
-					tabindex="0"
+				<button
+					class="w-full px-4 py-2.5 text-left text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors first:rounded-t-lg last:rounded-b-lg"
 					onmousedown={() => selectResult(result)}
 				>
 					{result.nombre}
-				</div>
+				</button>
 			{/each}
 		</div>
 	{/if}
 </div>
-
-<style>
-	.typeahead-container {
-		position: relative;
-		width: 100%;
-	}
-
-	.typeahead-input {
-		width: 100%;
-		height: 2.5rem; /* h-10 equivale a 40px */
-		padding: 0.5rem 0.75rem; /* px-3 py-2 */
-		border: 1px solid #cbd5e1; /* border-slate-300 */
-		border-radius: 0.375rem; /* rounded-md */
-		font-size: 0.875rem; /* text-sm */
-		line-height: 1.25rem;
-		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-	}
-
-	.typeahead-input:focus {
-		outline: none;
-		border-color: #3b82f6; /* focus:border-blue-500 */
-		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* focus:ring-2 focus:ring-blue-500 */
-	}
-
-	.dropdown {
-		position: absolute;
-		width: 100%;
-		max-height: 200px;
-		overflow-y: auto;
-		border: 1px solid #cbd5e1; /* border-slate-300 */
-		border-top: none;
-		border-radius: 0 0 0.375rem 0.375rem; /* rounded-b-md */
-		background: white;
-		z-index: 1000;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-	}
-
-	.dropdown-item {
-		padding: 0.5rem 0.75rem; /* px-3 py-2 */
-		cursor: pointer;
-		transition: background-color 0.15s ease-in-out;
-		font-size: 0.875rem; /* text-sm */
-		line-height: 1.25rem;
-	}
-
-	.dropdown-item:hover {
-		background-color: #f1f5f9; /* hover:bg-slate-100 */
-	}
-
-	.dropdown-item:active {
-		background-color: #e2e8f0; /* active:bg-slate-200 */
-	}
-</style>

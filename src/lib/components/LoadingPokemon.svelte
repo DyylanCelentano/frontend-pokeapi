@@ -3,67 +3,27 @@
 </script>
 
 <div class="flex flex-col items-center justify-center p-8 text-center">
-	<!-- Pokeball animada simple -->
-	<div class="pokeball animate-spin mb-4"></div>
+	<!-- Modern spinner -->
+	<div class="relative w-16 h-16 mb-6">
+		<!-- Outer ring -->
+		<div class="absolute inset-0 rounded-full border-2 border-[var(--color-border)]"></div>
+		<!-- Spinning accent -->
+		<div class="absolute inset-0 rounded-full border-2 border-transparent border-t-[var(--color-accent)] animate-spin"></div>
+		<!-- Center dot -->
+		<div class="absolute inset-0 flex items-center justify-center">
+			<div class="w-3 h-3 rounded-full bg-[var(--color-accent)] animate-pulse"></div>
+		</div>
+	</div>
 	
-	<!-- Mensaje de carga -->
-	<p class="text-lg font-medium text-slate-600 animate-pulse">
+	<!-- Loading message -->
+	<p class="text-base font-medium text-[var(--color-text-secondary)]">
 		{mensaje}
 	</p>
 	
-	<!-- Puntos animados -->
-	<div class="flex space-x-1 mt-2">
-		<div class="dot"></div>
-		<div class="dot" style="animation-delay: 0.1s;"></div>
-		<div class="dot" style="animation-delay: 0.2s;"></div>
+	<!-- Subtle dots -->
+	<div class="flex gap-1.5 mt-4">
+		<div class="w-1.5 h-1.5 rounded-full bg-[var(--color-text-muted)] animate-bounce" style="animation-delay: 0ms;"></div>
+		<div class="w-1.5 h-1.5 rounded-full bg-[var(--color-text-muted)] animate-bounce" style="animation-delay: 150ms;"></div>
+		<div class="w-1.5 h-1.5 rounded-full bg-[var(--color-text-muted)] animate-bounce" style="animation-delay: 300ms;"></div>
 	</div>
 </div>
-
-<style>
-	.pokeball {
-		width: 60px;
-		height: 60px;
-		background: 
-			linear-gradient(to bottom, 
-				#ff6b6b 0%, 
-				#ff6b6b 45%, 
-				#333 45%, 
-				#333 55%, 
-				#f8f9fa 55%, 
-				#f8f9fa 100%
-			);
-		border-radius: 50%;
-		border: 3px solid #333;
-		position: relative;
-	}
-	
-	.pokeball::after {
-		content: '';
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		width: 20px;
-		height: 20px;
-		background: radial-gradient(circle, #f8f9fa, #dee2e6);
-		border: 3px solid #333;
-		border-radius: 50%;
-		transform: translate(-50%, -50%);
-	}
-	
-	.dot {
-		width: 8px;
-		height: 8px;
-		background-color: #3b82f6;
-		border-radius: 50%;
-		animation: bounce 1.4s ease-in-out infinite both;
-	}
-	
-	@keyframes bounce {
-		0%, 80%, 100% {
-			transform: scale(0);
-		}
-		40% {
-			transform: scale(1.4);
-		}
-	}
-</style>

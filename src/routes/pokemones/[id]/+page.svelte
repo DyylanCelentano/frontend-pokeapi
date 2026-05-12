@@ -1,19 +1,17 @@
 <script>
 	import { afterNavigate, beforeNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import EtiquetaTipo from '$lib/components/EtiquetaTipo.svelte';
 	import { hideLoading, showLoading } from '$lib/stores/loading.js';
 	import { onDestroy } from 'svelte';
 	
 	let { data } = $props();
 	let previousId = null;
 
-	// Manejar loading después de cada navegación
 	afterNavigate((navigation) => {
 		const currentId = $page.params.id;
-		
-		// Si es la primera carga o cambio de ID, mostrar loading brevemente
 		if (previousId !== currentId) {
-			showLoading('Cargando información del Pokémon...');
+			showLoading('Cargando informacion del Pokemon...');
 			setTimeout(() => {
 				hideLoading();
 				previousId = currentId;
@@ -21,12 +19,10 @@
 		}
 	});
 
-	// Limpiar loading antes de navegar
 	beforeNavigate(() => {
 		hideLoading();
 	});
 
-	// Asegurar que el loading se oculta cuando el componente se destruye
 	onDestroy(() => {
 		hideLoading();
 	});
@@ -56,96 +52,85 @@
 		velocidad
 	} = $derived(estadisticas);
 	
-	function getTypeColor(typeName) {
-		const colors = {
-			'Normal': 'bg-gray-400',
-			'Lucha': 'bg-red-600',
-			'Volador': 'bg-blue-400',
-			'Veneno': 'bg-purple-500',
-			'Tierra': 'bg-yellow-600',
-			'Roca': 'bg-yellow-800',
-			'Insecto': 'bg-green-500',
-			'Fantasma': 'bg-purple-700',
-			'Acero': 'bg-gray-600',
-			'Fuego': 'bg-red-500',
-			'Agua': 'bg-blue-500',
-			'Planta': 'bg-green-600',
-			'Electrico': 'bg-yellow-400',
-			'Psiquico': 'bg-pink-500',
-			'Hielo': 'bg-blue-300',
-			'Dragon': 'bg-purple-800',
-			'Siniestro': 'bg-gray-800',
-			'Hada': 'bg-pink-300'
-		};
-		return colors[typeName] || 'bg-gray-400';
-	}
-	
 	function getStatColor(value) {
-		if (value >= 100) return 'bg-green-500';
-		if (value >= 70) return 'bg-yellow-500';
-		if (value >= 50) return 'bg-orange-500';
-		return 'bg-red-500';
+		if (value >= 100) return 'bg-[var(--color-success)]';
+		if (value >= 70) return 'bg-[var(--color-warning)]';
+		if (value >= 50) return 'bg-[var(--tipo-fuego)]';
+		return 'bg-[var(--color-error)]';
 	}
 	
 	function verEvolucion(evolucionId) {
+		showLoading('Cargando evolucion...');
 		goto(`/pokemones/${evolucionId}`);
 	}
+	
+	const stats = $derived([
+		{ name: 'HP', value: puntosDeGolpe },
+		{ name: 'Ataque', value: ataque },
+		{ name: 'Defensa', value: defensa },
+		{ name: 'Atq. Esp.', value: ataqueEspecial },
+		{ name: 'Def. Esp.', value: defensaEspecial },
+		{ name: 'Velocidad', value: velocidad }
+	]);
 </script>
 
 <svelte:head>
-	<title>{data.pokemon.nombre} - Pokémon - PokéAPI</title>
+	<title>{data.pokemon.nombre} - IntroDex</title>
 </svelte:head>
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
-	<!-- Header con navegación -->
-	<div class="bg-white shadow-sm border-b">
-		<div class="max-w-7xl mx-auto px-4 py-4">
+<div class="min-h-screen bg-[var(--color-bg-primary)]">
+	<!-- Header -->
+	<div class="border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)]">
+		<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 			<a
 				href="/pokemones"
-				class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors"
+				class="inline-flex items-center gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm"
 			>
-				<span class="text-xl">←</span>
-				Volver a Pokémones
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="15,18 9,12 15,6"/>
+				</svg>
+				Volver a Pokemon
 			</a>
 		</div>
 	</div>
 
-	<div class="max-w-6xl mx-auto px-4 py-8">
-		<!-- Tarjeta principal del Pokémon -->
-		<div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
-			<div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8">
+	<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+		<!-- Main Pokemon Card -->
+		<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl overflow-hidden mb-8">
+			<div class="p-8">
 				<div class="flex flex-col lg:flex-row items-center gap-8">
-					<!-- Imagen del Pokémon -->
-					<div class="flex-shrink-0">
-						<div class="bg-white/20 rounded-full p-4 backdrop-blur-sm">
+					<!-- Pokemon Image -->
+					<div class="flex-shrink-0 relative">
+						<div class="w-48 h-48 rounded-2xl bg-[var(--color-bg-elevated)] flex items-center justify-center">
 							<img 
 								src={imagen} 
-								alt={`Imagen del pokémon ${nombre}`} 
-								class="w-48 h-48 object-contain"
+								alt={`Imagen del pokemon ${nombre}`} 
+								class="w-40 h-40 object-contain"
 							/>
+						</div>
+						<div class="absolute -top-2 -right-2 bg-[var(--color-bg-primary)] border border-[var(--color-border)] px-3 py-1 rounded-lg text-sm font-mono text-[var(--color-text-muted)]">
+							#{id.toString().padStart(3, '0')}
 						</div>
 					</div>
 					
-					<!-- Información básica -->
+					<!-- Basic Info -->
 					<div class="flex-1 text-center lg:text-left">
-						<h1 class="text-5xl font-bold capitalize mb-4">{nombre}</h1>
-						<div class="flex flex-wrap gap-3 justify-center lg:justify-start mb-6">
+						<h1 class="text-4xl font-bold text-[var(--color-text-primary)] capitalize mb-4">{nombre}</h1>
+						<div class="flex flex-wrap gap-2 justify-center lg:justify-start mb-6">
 							{#each tipos as tipo}
-								<span class="px-4 py-2 {getTypeColor(tipo.nombre)} text-white rounded-full font-semibold shadow-lg">
-									{tipo.nombre}
-								</span>
+								<EtiquetaTipo tipo={tipo.nombre} tamaño="lg" />
 							{/each}
 						</div>
 						
-						<!-- Información física -->
-						<div class="grid grid-cols-2 gap-4 max-w-sm mx-auto lg:mx-0">
-							<div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
-								<div class="text-sm opacity-90">Altura</div>
-								<div class="text-2xl font-bold">{altura}m</div>
+						<!-- Physical info -->
+						<div class="grid grid-cols-2 gap-4 max-w-xs mx-auto lg:mx-0">
+							<div class="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4">
+								<div class="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Altura</div>
+								<div class="text-xl font-semibold text-[var(--color-text-primary)]">{altura}m</div>
 							</div>
-							<div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
-								<div class="text-sm opacity-90">Peso</div>
-								<div class="text-2xl font-bold">{peso}kg</div>
+							<div class="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4">
+								<div class="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-1">Peso</div>
+								<div class="text-xl font-semibold text-[var(--color-text-primary)]">{peso}kg</div>
 							</div>
 						</div>
 					</div>
@@ -153,31 +138,28 @@
 			</div>
 		</div>
 
-		<!-- Grid de información detallada -->
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-			<!-- Estadísticas -->
-			<div class="bg-white rounded-xl shadow-lg p-6">
-				<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-					<span>📊</span>
-					Estadísticas Base
+		<!-- Stats and Abilities Grid -->
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+			<!-- Stats -->
+			<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6">
+				<h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
+					<svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="20" x2="18" y2="10"/>
+						<line x1="12" y1="20" x2="12" y2="4"/>
+						<line x1="6" y1="20" x2="6" y2="14"/>
+					</svg>
+					Estadisticas Base
 				</h2>
 				<div class="space-y-4">
-					{#each [
-						{ name: 'HP', value: puntosDeGolpe, key: 'hp' },
-						{ name: 'Ataque', value: ataque, key: 'attack' },
-						{ name: 'Defensa', value: defensa, key: 'defense' },
-						{ name: 'Ataque Esp.', value: ataqueEspecial, key: 'sp-attack' },
-						{ name: 'Defensa Esp.', value: defensaEspecial, key: 'sp-defense' },
-						{ name: 'Velocidad', value: velocidad, key: 'speed' }
-					] as stat}
+					{#each stats as stat}
 						<div>
 							<div class="flex justify-between items-center mb-2">
-								<span class="font-medium text-slate-700">{stat.name}</span>
-								<span class="font-bold text-slate-800">{stat.value}</span>
+								<span class="text-sm text-[var(--color-text-secondary)]">{stat.name}</span>
+								<span class="text-sm font-semibold text-[var(--color-text-primary)] font-mono">{stat.value}</span>
 							</div>
-							<div class="w-full bg-gray-200 rounded-full h-3">
+							<div class="w-full bg-[var(--color-bg-elevated)] rounded-full h-2">
 								<div 
-									class="h-3 rounded-full transition-all duration-700 {getStatColor(stat.value)}"
+									class="h-2 rounded-full transition-all duration-700 {getStatColor(stat.value)}"
 									style="width: {Math.min((stat.value / 150) * 100, 100)}%"
 								></div>
 							</div>
@@ -186,70 +168,74 @@
 				</div>
 			</div>
 
-			<!-- Habilidades -->
-			<div class="bg-white rounded-xl shadow-lg p-6">
-				<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-					<span>⚡</span>
+			<!-- Abilities -->
+			<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6">
+				<h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
+					<svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/>
+					</svg>
 					Habilidades
 				</h2>
 				<div class="space-y-4">
 					{#each habilidades as habilidad}
-						<div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-200">
-							<h3 class="font-semibold text-slate-800 mb-2">{habilidad.nombre}</h3>
-							<p class="text-slate-600 text-sm leading-relaxed">{habilidad.descripcion}</p>
+						<div class="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4">
+							<h3 class="font-medium text-[var(--color-text-primary)] mb-2">{habilidad.nombre}</h3>
+							<p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">{habilidad.descripcion}</p>
 						</div>
 					{/each}
 				</div>
 			</div>
 		</div>
 
-		<!-- Evoluciones -->
+		<!-- Evolutions -->
 		{#if evoluciones && evoluciones.length > 0}
-			<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-				<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-					<span>🔄</span>
+			<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+				<h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
+					<svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<polyline points="23,4 23,10 17,10"/>
+						<polyline points="1,20 1,14 7,14"/>
+						<path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+					</svg>
 					Evoluciones
 				</h2>
-				<div class="flex flex-wrap gap-6 justify-center">
+				<div class="flex flex-wrap gap-4 justify-center">
 					{#each evoluciones as evolucion}
 						<button 
 							onclick={() => verEvolucion(evolucion.id)}
-							class="group bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+							class="group bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-xl p-4 hover:border-[var(--color-border-focus)] hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
 						>
 							<img 
 								src={evolucion.imagen} 
 								alt={evolucion.nombre}
-								class="w-24 h-24 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
+								class="w-20 h-20 mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
 							/>
-							<p class="text-center font-medium text-slate-700 capitalize">{evolucion.nombre}</p>
+							<p class="text-center text-sm font-medium text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] capitalize transition-colors">{evolucion.nombre}</p>
 						</button>
 					{/each}
 				</div>
 			</div>
 		{/if}
 
-		<!-- Sección de tipos con debilidades -->
-		<div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-			<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-				<span>🛡️</span>
+		<!-- Type Weaknesses -->
+		<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+			<h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
+				<svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+				</svg>
 				Tipos y Debilidades
 			</h2>
 			<div class="space-y-4">
 				{#each tipos as tipo}
-					<div class="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border border-gray-200">
+					<div class="bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4">
 						<div class="flex items-center gap-3 mb-3">
-							<span class="px-3 py-1 {getTypeColor(tipo.nombre)} text-white rounded-full font-semibold">
-								{tipo.nombre}
-							</span>
+							<EtiquetaTipo tipo={tipo.nombre} tamaño="md" />
 						</div>
 						{#if tipo.debilidades && tipo.debilidades.length > 0}
 							<div>
-								<span class="text-sm font-medium text-slate-600 mb-2 block">Débil contra:</span>
+								<span class="text-xs text-[var(--color-text-muted)] uppercase tracking-wider mb-2 block">Debil contra:</span>
 								<div class="flex flex-wrap gap-2">
 									{#each tipo.debilidades as debilidad}
-										<span class="px-2 py-1 {getTypeColor(debilidad.nombre)} text-white rounded-full text-xs">
-											{debilidad.nombre}
-										</span>
+										<EtiquetaTipo tipo={debilidad.nombre} tamaño="sm" />
 									{/each}
 								</div>
 							</div>
@@ -259,35 +245,37 @@
 			</div>
 		</div>
 
-		<!-- Secciones de movimientos -->
-		<div class="bg-white rounded-xl shadow-lg p-6">
-			<h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-				<span>⚔️</span>
+		<!-- Moves -->
+		<div class="bg-[var(--color-bg-card)] border border-[var(--color-border)] rounded-xl p-6">
+			<h2 class="text-lg font-semibold text-[var(--color-text-primary)] mb-6 flex items-center gap-2">
+				<svg class="w-5 h-5 text-[var(--color-text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"/>
+					<polygon points="10,8 16,12 10,16 10,8"/>
+				</svg>
 				Movimientos
 			</h2>
 			
-			<!-- Movimientos por huevo -->
+			<!-- Egg Moves -->
 			{#if movimientosHuevo && movimientosHuevo.length > 0}
 				<div class="mb-8">
-					<h3 class="text-xl font-semibold text-slate-700 mb-4 flex items-center gap-2">
-						<span>🥚</span>
+					<h3 class="text-sm font-medium text-[var(--color-text-secondary)] mb-4 uppercase tracking-wider flex items-center gap-2">
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<ellipse cx="12" cy="12" rx="8" ry="10"/>
+						</svg>
 						Por Huevo
 					</h3>
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 						{#each movimientosHuevo as movimiento}
 							<a 
 								href="/movimientos/{movimiento.id}"
-								class="group bg-gradient-to-br from-pink-50 to-rose-50 border border-pink-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+								class="group bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-border-focus)] transition-all duration-200"
 							>
-								<h4 class="font-semibold text-slate-800 group-hover:text-pink-600 mb-2">{movimiento.nombre}</h4>
-								<div class="flex flex-wrap gap-2 text-sm">
-									<span class="px-2 py-1 bg-pink-100 text-pink-700 rounded-full text-xs">{movimiento.tipo.nombre}</span>
-									<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{movimiento.categoria}</span>
+								<h4 class="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] mb-2 text-sm">{movimiento.nombre}</h4>
+								<div class="flex flex-wrap gap-1.5">
+									<EtiquetaTipo tipo={movimiento.tipo.nombre} tamaño="sm" />
+									<span class="px-2 py-0.5 bg-[var(--color-bg-primary)] text-[var(--color-text-muted)] rounded text-xs">{movimiento.categoria}</span>
 									{#if movimiento.potencia}
-										<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs">⚡ {movimiento.potencia}</span>
-									{/if}
-									{#if movimiento.precision}
-										<span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🎯 {movimiento.precision}%</span>
+										<span class="px-2 py-0.5 bg-[var(--color-error)]/10 text-[var(--color-error)] rounded text-xs">{movimiento.potencia}</span>
 									{/if}
 								</div>
 							</a>
@@ -296,28 +284,28 @@
 				</div>
 			{/if}
 			
-			<!-- Movimientos por máquina -->
+			<!-- Machine Moves -->
 			{#if movimientosMaquina && movimientosMaquina.length > 0}
 				<div class="mb-8">
-					<h3 class="text-xl font-semibold text-slate-700 mb-4 flex items-center gap-2">
-						<span>🔧</span>
-						Por Máquina (MT/MO)
+					<h3 class="text-sm font-medium text-[var(--color-text-secondary)] mb-4 uppercase tracking-wider flex items-center gap-2">
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<rect x="4" y="4" width="16" height="16" rx="2" ry="2"/>
+							<circle cx="12" cy="12" r="4"/>
+						</svg>
+						Por Maquina (MT/MO)
 					</h3>
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 						{#each movimientosMaquina as movimiento}
 							<a 
 								href="/movimientos/{movimiento.id}"
-								class="group bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+								class="group bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-border-focus)] transition-all duration-200"
 							>
-								<h4 class="font-semibold text-slate-800 group-hover:text-blue-600 mb-2">{movimiento.nombre}</h4>
-								<div class="flex flex-wrap gap-2 text-sm">
-									<span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">{movimiento.tipo.nombre}</span>
-									<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{movimiento.categoria}</span>
+								<h4 class="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] mb-2 text-sm">{movimiento.nombre}</h4>
+								<div class="flex flex-wrap gap-1.5">
+									<EtiquetaTipo tipo={movimiento.tipo.nombre} tamaño="sm" />
+									<span class="px-2 py-0.5 bg-[var(--color-bg-primary)] text-[var(--color-text-muted)] rounded text-xs">{movimiento.categoria}</span>
 									{#if movimiento.potencia}
-										<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs">⚡ {movimiento.potencia}</span>
-									{/if}
-									{#if movimiento.precision}
-										<span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🎯 {movimiento.precision}%</span>
+										<span class="px-2 py-0.5 bg-[var(--color-error)]/10 text-[var(--color-error)] rounded text-xs">{movimiento.potencia}</span>
 									{/if}
 								</div>
 							</a>
@@ -326,28 +314,28 @@
 				</div>
 			{/if}
 			
-			<!-- Movimientos por nivel -->
+			<!-- Level Moves -->
 			{#if movimientosNivel && movimientosNivel.length > 0}
 				<div>
-					<h3 class="text-xl font-semibold text-slate-700 mb-4 flex items-center gap-2">
-						<span>📈</span>
+					<h3 class="text-sm font-medium text-[var(--color-text-secondary)] mb-4 uppercase tracking-wider flex items-center gap-2">
+						<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<polyline points="23,6 13.5,15.5 8.5,10.5 1,18"/>
+							<polyline points="17,6 23,6 23,12"/>
+						</svg>
 						Por Nivel
 					</h3>
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
 						{#each movimientosNivel as movimiento}
 							<a 
 								href="/movimientos/{movimiento.id}"
-								class="group bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-4 hover:shadow-md transition-all duration-300 hover:-translate-y-1"
+								class="group bg-[var(--color-bg-elevated)] border border-[var(--color-border)] rounded-lg p-4 hover:border-[var(--color-border-focus)] transition-all duration-200"
 							>
-								<h4 class="font-semibold text-slate-800 group-hover:text-green-600 mb-2">{movimiento.nombre}</h4>
-								<div class="flex flex-wrap gap-2 text-sm">
-									<span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">{movimiento.tipo.nombre}</span>
-									<span class="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">{movimiento.categoria}</span>
+								<h4 class="font-medium text-[var(--color-text-primary)] group-hover:text-[var(--color-accent)] mb-2 text-sm">{movimiento.nombre}</h4>
+								<div class="flex flex-wrap gap-1.5">
+									<EtiquetaTipo tipo={movimiento.tipo.nombre} tamaño="sm" />
+									<span class="px-2 py-0.5 bg-[var(--color-bg-primary)] text-[var(--color-text-muted)] rounded text-xs">{movimiento.categoria}</span>
 									{#if movimiento.potencia}
-										<span class="px-2 py-1 bg-red-100 text-red-700 rounded-full text-xs">⚡ {movimiento.potencia}</span>
-									{/if}
-									{#if movimiento.precision}
-										<span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">🎯 {movimiento.precision}%</span>
+										<span class="px-2 py-0.5 bg-[var(--color-error)]/10 text-[var(--color-error)] rounded text-xs">{movimiento.potencia}</span>
 									{/if}
 								</div>
 							</a>

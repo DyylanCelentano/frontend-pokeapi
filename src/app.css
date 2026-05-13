@@ -863,7 +863,10 @@ h1, h2, h3, h4, h5 {
 .home-featured-v2__image-area {
   position: relative;
   padding: 1rem 0 0;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .home-featured-v2__glow {

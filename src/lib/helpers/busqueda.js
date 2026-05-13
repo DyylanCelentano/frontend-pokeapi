@@ -1,4 +1,5 @@
 import { goto } from '$app/navigation';
+import { showLoading } from '$lib/stores/loading.js';
 
 // Función para buscar pokémones y navegar con los resultados
 export function buscarPokemon(nombre) {
@@ -6,6 +7,7 @@ export function buscarPokemon(nombre) {
     
     const nombreLimpio = nombre.trim();
     const urlBusqueda = `/pokemones?nombre=${encodeURIComponent(nombreLimpio)}`;
+    showLoading('Buscando Pokemon...');
     goto(urlBusqueda);
 }
 

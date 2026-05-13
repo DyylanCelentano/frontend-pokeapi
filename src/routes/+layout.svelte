@@ -1,14 +1,21 @@
 <script>
   import Encabezado from '$lib/components/Encabezado.svelte';
   import LoadingPokemon from '$lib/components/LoadingPokemon.svelte';
-  import { isLoading, loadingMessage } from '$lib/stores/loading.js';
+  import { afterNavigate, beforeNavigate } from '$app/navigation';
+  import { get } from 'svelte/store';
+  import { hideLoading, isLoading, loadingMessage, showLoading } from '$lib/stores/loading.js';
   import '../app.css';
   
   let { children } = $props();
-  
-  // Debug: observar cambios en el store
-  $effect(() => {
-    console.log('Estado de loading:', $isLoading, 'Mensaje:', $loadingMessage);
+
+  beforeNavigate(() => {
+    if (!get(isLoading)) {
+      showLoading('Cargando seccion...');
+    }
+  });
+
+  afterNavigate(() => {
+    hideLoading();
   });
 </script>
 
@@ -16,53 +23,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </svelte:head>
 
-<div class="min-h-screen flex flex-col overflow-x-hidden bg-gray-800">
-  <!-- Header -->
+<div class="app-shell">
   <Encabezado />
 
+  <main class="app-main">
+    <div class="ui-fade-in">
+      {@render children?.()}
+    </div>
 
-  <!-- Contenido principal -->
-  <main class="flex-1 relative overflow-x-hidden">
-    {@render children?.()}
-    
-    <!-- Loading overlay -->
     {#if $isLoading}
-      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg p-8 shadow-2xl">
+      <div class="loading-overlay">
+        <div class="loading-card">
           <LoadingPokemon mensaje={$loadingMessage} />
         </div>
       </div>
     {/if}
   </main>
 
-  <footer class="bg-slate-800 text-white py-12 mt-12">
-
-    <div class="max-w-7xl mx-auto px-16"> <!-- Contenido del footer -->
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8"> <!-- grid -->
-      
-        <div class="md:col-span-1"> <!-- Parte izquierda -->
-          <h4 class="text-lg font-semibold mb-4 text-white">IntroDex</h4>
-          <p class="text-slate-400 mb-2">Proyecto Integrador Académico</p>
-          <p class="text-slate-400 mb-2">Introducción al Desarrollo de Software</p>
-          <p class="text-slate-400">Universidad de Buenos Aires</p>
-        </div> <!-- Parte izquierda -->
-        
-        <div> <!-- Medio -->
-          <h5 class="text-base font-semibold mb-4 text-white">Explorar</h5>
-          <ul class="space-y-2">
-            <li><a href="/pokemones" class="text-slate-400 hover:text-white transition-colors">Pokémon</a></li>
-            <li><a href="/movimientos" class="text-slate-400 hover:text-white transition-colors">Movimientos</a></li>
-            <li><a href="/equipos" class="text-slate-400 hover:text-white transition-colors">Equipos</a></li>
-          </ul>
-        </div> <!-- Medio -->
-
-
-      </div> <!-- grid -->
-      
-    </div> <!-- Contenido del footer -->
-
+  <footer class="app-footer">
+    <div class="ui-container">
+      <div class="footer-grid">
+        <div>
+          <h4>IntroDex</h4>
+          <p>Proyecto integrador orientado a datos de combate y exploracion.</p>
+          <p>Universidad de Buenos Aires.</p>
+        </div>
+        <div>
+          <h5>Explorar</h5>
+          <div class="footer-links">
+            <a href="/pokemones">Pokemones</a>
+            <a href="/movimientos">Movimientos</a>
+            <a href="/equipos">Equipos</a>
+          </div>
+        </div>
+        <div>
+          <h5>Recursos</h5>
+          <p>Datos provistos por la API academica del proyecto.</p>
+        </div>
+      </div>
+    </div>
   </footer>
-
-
 </div>

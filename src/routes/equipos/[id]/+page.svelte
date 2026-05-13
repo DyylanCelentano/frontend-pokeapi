@@ -17,6 +17,7 @@
 	// Variables de estado generales
 	let mensajeError = $state('');
 	let mensajeExito = $state('');
+	let panelActivo = $state('integrante');
 
 	// Limpiar mensajes después de 5 segundos
 	$effect(() => {
@@ -45,7 +46,7 @@
 
 	function validarLimiteIntegrantes() {
 		if (data.equipo.integrantes.length >= 6) {
-			mensajeError = 'Este equipo ya tiene el máximo de 6 integrantes.';
+			mensajeError = 'Este equipo ya tiene 6 integrantes.';
 			return false;
 		}
 		return true;
@@ -53,7 +54,7 @@
 
 	function validarLimiteMovimientos(integrante) {
 		if (integrante.movimientos && integrante.movimientos.length >= 4) {
-			mensajeError = `${integrante.apodo} ya tiene el máximo de 4 movimientos.`;
+			mensajeError = `${integrante.apodo} ya tiene 4 movimientos.`;
 			return false;
 		}
 		return true;
@@ -82,10 +83,10 @@
 
 	function manejarEnvioCrearIntegrante() {
 		if (!validarLimiteIntegrantes()) return false;
-		showLoading('Agregando integrante...');
+		showLoading('Sumando integrante...');
 		setTimeout(() => {
 			limpiarFormularioNuevoIntegrante();
-			mensajeExito = 'Integrante agregado exitosamente.';
+			mensajeExito = 'Integrante agregado.';
 			hideLoading();
 		}, 100);
 		return true;
@@ -94,21 +95,21 @@
 	function manejarEnvioAgregarMovimiento() {
 		const integrante = obtenerIntegrantePorId(integranteParaMovimiento);
 		if (!integrante) {
-			mensajeError = 'Debe seleccionar un integrante válido.';
+			mensajeError = 'Selecciona un integrante valido.';
 			return false;
 		}
 
 		if (!validarLimiteMovimientos(integrante)) return false;
 
 		if (tieneMovimientoDuplicado(integrante, movimientoSeleccionado)) {
-			mensajeError = 'Este integrante ya tiene ese movimiento.';
+			mensajeError = 'Ese movimiento ya esta cargado.';
 			return false;
 		}
 
-		showLoading('Agregando movimiento...');
+		showLoading('Sumando movimiento...');
 		setTimeout(() => {
 			limpiarFormularioMovimiento();
-			mensajeExito = 'Movimiento agregado exitosamente.';
+			mensajeExito = 'Movimiento agregado.';
 			hideLoading();
 		}, 100);
 		return true;
@@ -116,205 +117,109 @@
 
 	function manejarEnvioEditarIntegrante() {
 		if (!integranteParaEditar) {
-			mensajeError = 'Debe seleccionar un integrante para editar.';
+			mensajeError = 'Selecciona un integrante para editar.';
 			return false;
 		}
 
-		showLoading('Editando integrante...');
+		showLoading('Actualizando integrante...');
 		setTimeout(() => {
 			limpiarFormularioEdicion();
-			mensajeExito = 'Integrante editado exitosamente.';
+			mensajeExito = 'Integrante actualizado.';
 			hideLoading();
 		}, 100);
 		return true;
 	}
 
 	function manejarEliminarIntegrante() {
-		showLoading('Eliminando integrante...');
+		showLoading('Sacando integrante...');
 		return true;
 	}
 </script>
 
 <svelte:head>
-	<title>{data.equipo.nombre} - Equipos - PokéAPI</title>
+	<title>IntroDex | {data.equipo.nombre}</title>
 </svelte:head>
 
-<div class="min-h-screen bg-slate-50 text-lg py-8">
-	<div class="max-w-7xl mx-auto px-4">
-		<a
-			href="../"
-			class="inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 transition-colors mb-6"
-		>
-			<span class="text-xl">←</span>
-			Volver a Equipos
-		</a>
+<div class="page-shell">
+	<div class="ui-container">
+		<a href="../" class="back-link">Volver a equipos</a>
 
-		<!-- Header del equipo -->
-		<div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8">
-			<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-				<div class="flex-1">
-					<h1 class="text-3xl font-bold text-slate-800 mb-2">{data.equipo.nombre}</h1>
-					<div class="flex items-center gap-4 text-sm text-slate-600">
-						<span>📍 Generación {data.equipo.generacion.numero}</span>
-						<span>👥 {data.equipo.integrantes.length}/6 integrantes</span>
-					</div>
+		<div class="detail-card team-detail-hero">
+			<div>
+				<h1>{data.equipo.nombre}</h1>
+				<p class="ui-subtitle">Generacion {data.equipo.generacion.numero} · {data.equipo.integrantes.length}/6 integrantes</p>
+			</div>
+			<div class="team-detail-progress">
+				<div class="team-detail-progress__header">
+					<span>Progreso del equipo</span>
+					<span>{data.equipo.integrantes.length}/6</span>
 				</div>
-				
-				<!-- Barra de progreso del equipo -->
-				<div class="w-full lg:w-64">
-					<div class="flex justify-between text-sm text-slate-600 mb-2">
-						<span>Progreso del equipo</span>
-						<span>{data.equipo.integrantes.length}/6</span>
-					</div>
-					<div class="w-full bg-slate-200 rounded-full h-3">
-						<div 
-							class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500"
-							style="width: {(data.equipo.integrantes.length / 6) * 100}%"
-						></div>
-					</div>
+				<div class="ui-bar">
+					<span style={`width:${(data.equipo.integrantes.length / 6) * 100}%`}></span>
 				</div>
 			</div>
 		</div>
 
-		<!-- Mensajes de estado -->
 		{#if mensajeError}
-			<div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-md mb-6">
-				<div class="flex items-center">
-					<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							fill-rule="evenodd"
-							d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-							clip-rule="evenodd"
-						></path>
-					</svg>
-					{mensajeError}
-				</div>
-			</div>
+			<div class="banner error">{mensajeError}</div>
 		{/if}
 
 		{#if mensajeExito}
-			<div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-md mb-6">
-				<div class="flex items-center">
-					<svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-						<path
-							fill-rule="evenodd"
-							d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-							clip-rule="evenodd"
-						></path>
-					</svg>
-					{mensajeExito}
-				</div>
-			</div>
+			<div class="banner success">{mensajeExito}</div>
 		{/if}
 
-		<h3 class="text-2xl font-bold text-slate-800 mb-6">
-			Integrantes de {data.equipo.nombre}
-			<span class="text-sm font-normal text-slate-600">({data.equipo.integrantes.length}/6)</span>
-		</h3>
+		<h3 class="section-title">Integrantes ({data.equipo.integrantes.length}/6)</h3>
 
 		{#if data.equipo.integrantes.length === 0}
 			<EmptyState
 				title="Sin integrantes"
-				message="Este equipo aún no tiene integrantes. ¡Comienza agregando tu primer Pokémon!"
-				icon="👥"
+				message="Este equipo todavia no tiene integrantes."
 				suggestions={[
-					"Usa el formulario de abajo para agregar un nuevo integrante",
-					"Cada equipo puede tener hasta 6 integrantes",
+					"Usa el panel de abajo para sumar uno",
+					"Cada equipo admite hasta 6 integrantes",
 					"Cada integrante puede aprender hasta 4 movimientos"
 				]}
 			/>
 		{:else}
-			<!-- Lista de integrantes en formato de cards -->
-			<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<div class="team-member-grid">
 				{#each data.equipo.integrantes as integrante}
 					{@const movimientosFormateados = obtenerMovimientosFormateados(integrante)}
-					<div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
-						<!-- Header con info básica del integrante -->
-						<div class="p-4 sm:p-6 border-b border-slate-100">
-							<div class="flex items-start justify-between mb-4">
-								<div class="flex-1">
-									<h4 class="text-lg font-bold text-slate-800 mb-1">
-										{integrante.apodo}
-									</h4>
-									<a
-										href="/pokemones/{integrante.pokemon.id}"
-										class="text-blue-600 hover:text-blue-800 font-medium text-sm"
-									>
-										{integrante.pokemon.nombre}
-									</a>
-								</div>
-								<div class="flex items-center gap-2">
-									<img
-										src={integrante.pokemon.imagen}
-										alt={integrante.pokemon.nombre}
-										class="w-16 h-16 object-contain rounded-lg bg-slate-50"
-									/>
-									<form action="?/eliminar_integrante" method="POST" onsubmit={manejarEliminarIntegrante}>
-										<input type="hidden" name="integrante_id" value={integrante.id} />
-										<input type="hidden" name="id_equipo" value={data.equipo.id} />
-										<button
-											class="text-red-500 hover:text-red-700 p-2 rounded-md hover:bg-red-50 transition-colors"
-											aria-label="Eliminar integrante {integrante.apodo}"
-											title="Eliminar {integrante.apodo}"
-										>
-											<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-												<path
-													fill-rule="evenodd"
-													d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9zM4 5a2 2 0 012-2v1a1 1 0 001 1h6a1 1 0 001-1V3a2 2 0 012 2v6.5l1.707 1.707A1 1 0 0117 14H3a1 1 0 01-.707-1.707L4 10.5V5zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-													clip-rule="evenodd"
-												></path>
-											</svg>
-										</button>
-									</form>
-								</div>
+					<div class="team-member-card">
+						<div class="team-member-card__header">
+							<div>
+								<h4>{integrante.apodo}</h4>
+								<a href="/pokemones/{integrante.pokemon.id}">{integrante.pokemon.nombre}</a>
+							</div>
+							<div class="team-member-card__media">
+								<img src={integrante.pokemon.imagen} alt={integrante.pokemon.nombre} />
+								<form action="?/eliminar_integrante" method="POST" onsubmit={manejarEliminarIntegrante}>
+									<input type="hidden" name="integrante_id" value={integrante.id} />
+									<input type="hidden" name="id_equipo" value={data.equipo.id} />
+									<button class="ui-button ghost" type="submit">Eliminar</button>
+								</form>
 							</div>
 						</div>
-						
-						<!-- Movimientos -->
-						<div class="p-4 sm:p-6">
-							<h5 class="text-sm font-semibold text-slate-700 mb-3">Movimientos ({integrante.movimientos.length}/4)</h5>
-							<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-								{#each movimientosFormateados as movimiento, i}
-									<div class="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+						<div class="team-member-card__body">
+							<h5>Movimientos ({integrante.movimientos.length}/4)</h5>
+							<div class="team-member-moves">
+								{#each movimientosFormateados as movimiento}
+									<div class="team-member-move">
 										{#if movimiento}
-											<div class="flex-1">
-												<span class="text-sm font-medium text-slate-800">{movimiento.nombre}</span>
-											</div>
-											<a
-												href="/movimientos/{movimiento.id}"
-												class="w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-md transition-colors text-white flex items-center justify-center ml-2"
-												aria-label="Ver detalles de {movimiento.nombre}"
-												title="Ver {movimiento.nombre}"
-											>
-												<svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-													<path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
-													<path
-														fill-rule="evenodd"
-														d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-														clip-rule="evenodd"
-													></path>
-												</svg>
-											</a>
+											<span>{movimiento.nombre}</span>
+											<a href="/movimientos/{movimiento.id}">Ver</a>
 										{:else}
-											<div class="flex-1">
-												<span class="text-slate-400 italic text-sm">Espacio libre</span>
-											</div>
-											<div class="w-8 h-8 bg-slate-200 rounded-md flex items-center justify-center">
-												<span class="text-slate-400 text-xs">+</span>
-											</div>
+											<span class="empty-slot">Espacio libre</span>
 										{/if}
 									</div>
 								{/each}
 							</div>
-							
-							<!-- Progreso de movimientos -->
-							<div class="mt-4">
-								<div class="flex justify-between text-xs text-slate-600 mb-1">
+							<div class="team-member-progress">
+								<div>
 									<span>Movimientos aprendidos</span>
 									<span>{integrante.movimientos.length}/4</span>
 								</div>
-								<div class="w-full bg-slate-200 rounded-full h-2">
-									<div class="bg-green-600 h-2 rounded-full transition-all duration-300" style="width: {(integrante.movimientos.length / 4) * 100}%"></div>
+								<div class="ui-bar">
+									<span style={`width:${(integrante.movimientos.length / 4) * 100}%`}></span>
 								</div>
 							</div>
 						</div>
@@ -323,225 +228,187 @@
 			</div>
 		{/if}
 
-		<!-- Grid de tres formularios -->
-		<div class="grid md:grid-cols-3 gap-6 mt-8">
-			<!-- 1. Formulario: Crear nuevo integrante -->
-			<section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-				<h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-					<span
-						class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-3"
-						>1</span
-					>
-					Crear Integrante
-				</h2>
+		<section class="manage-panel">
+			<div class="manage-panel__tabs">
+				<button
+					onclick={() => (panelActivo = 'integrante')}
+					class:active={panelActivo === 'integrante'}
+				>
+					Agregar integrante
+				</button>
+				<button
+					onclick={() => (panelActivo = 'movimiento')}
+					class:active={panelActivo === 'movimiento'}
+				>
+					Agregar movimiento
+				</button>
+				<button
+					onclick={() => (panelActivo = 'editar')}
+					class:active={panelActivo === 'editar'}
+				>
+					Editar integrante
+				</button>
+			</div>
 
-				{#if data.equipo.integrantes.length >= 6}
-					<div
-						class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-3 py-2 rounded-md text-sm"
-					>
-						<div class="flex items-center">
-							<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-								<path
-									fill-rule="evenodd"
-									d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-									clip-rule="evenodd"
-								></path>
-							</svg>
-							Equipo completo (6/6)
+			<div class="manage-panel__body">
+				{#if panelActivo === 'integrante'}
+					<h2>Sumar integrante</h2>
+					<p>Elegi un Pokemon y ponele un apodo con onda.</p>
+					{#if data.equipo.integrantes.length >= 6}
+						<div class="banner warning">
+							Equipo completo (6/6). Libera un lugar y seguimos.
 						</div>
-					</div>
-				{:else}
-					<form
-						action="?/agregar_integrante"
-						method="POST"
-						class="space-y-4"
-						onsubmit={manejarEnvioCrearIntegrante}
-					>
-						<input type="hidden" name="id_equipo" value={data.equipo.id} />
-						<input type="hidden" name="id_pokemon" bind:value={idPokemonNuevo} />
-						<div>
-							<label for="pokemon-nuevo" class="block text-sm font-medium text-slate-700 mb-2">
-								Pokémon <span class="text-red-500">*</span>
-							</label>
-							<div id="pokemon-nuevo">
-								<Typeahead
-									endpoint="{API_URL}/pokemon/"
-									placeholder="Buscar Pokémon..."
-									on:select={(event) => {
-										idPokemonNuevo = event.detail.result.id;
-										mensajeError = '';
-									}}
+					{:else}
+						<form
+							action="?/agregar_integrante"
+							method="POST"
+							class="form-stack"
+							onsubmit={manejarEnvioCrearIntegrante}
+						>
+							<input type="hidden" name="id_equipo" value={data.equipo.id} />
+							<input type="hidden" name="id_pokemon" bind:value={idPokemonNuevo} />
+							<div>
+								<label for="pokemon-nuevo">Pokemon</label>
+								<div id="pokemon-nuevo">
+									<Typeahead
+										endpoint={`${API_URL}/pokemon/`}
+										placeholder="Buscar Pokemon..."
+										on:select={(event) => {
+											idPokemonNuevo = event.detail.result.id;
+											mensajeError = '';
+										}}
+									/>
+								</div>
+							</div>
+							<div>
+								<label for="apodo-nuevo">Apodo</label>
+								<input
+									id="apodo-nuevo"
+									type="text"
+									name="apodo"
+									bind:value={apodoNuevo}
+									required
+									maxlength="50"
+									class="ui-input"
+									placeholder="Ej: La fiera"
 								/>
 							</div>
-						</div>
-
-						<div>
-							<label for="apodo-nuevo" class="block text-sm font-medium text-slate-700 mb-2">
-								Apodo <span class="text-red-500">*</span>
-							</label>
-							<input
-								id="apodo-nuevo"
-								type="text"
-								name="apodo"
-								bind:value={apodoNuevo}
-								required
-								maxlength="50"
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm h-10"
-								placeholder="Apodo del integrante"
-							/>
-						</div>
-
-						<button
-							type="submit"
-							disabled={!idPokemonNuevo || !apodoNuevo}
-							class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-md transition-colors text-sm"
-						>
-							Agregar Integrante
-						</button>
-					</form>
-				{/if}
-			</section>
-
-			<!-- 2. Formulario: Agregar movimiento -->
-			<section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-				<h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-					<span
-						class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-sm mr-3"
-						>2</span
-					>
-					Agregar Movimiento
-				</h2>
-
-				{#if data.equipo.integrantes.length === 0}
-					<div class="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm">
-						Sin integrantes en el equipo
-					</div>
-				{:else}
-					<form
-						action="?/agregar_movimiento"
-						method="POST"
-						class="space-y-4"
-						onsubmit={manejarEnvioAgregarMovimiento}
-					>
-						<!-- CAMPO OCULTO PARA ID DEL EQUIPO -->
-						<input type="hidden" name="id_equipo" value={data.equipo.id} />
-						<input type="hidden" name="id_movimiento" bind:value={movimientoSeleccionado} />
-						<div>
-							<label for="integrante-movimiento" class="block text-sm font-medium text-slate-700 mb-2">
-								Integrante <span class="text-red-500">*</span>
-							</label>
-							<select
-								id="integrante-movimiento"
-								name="id_integrante"
-								bind:value={integranteParaMovimiento}
-								required
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 text-sm h-10"
+							<button
+								type="submit"
+								disabled={!idPokemonNuevo || !apodoNuevo}
+								class="ui-button primary"
 							>
-								<option value="">Selecciona un integrante</option>
-								{#each data.equipo.integrantes as integrante}
-									<option value={integrante.id}>
-										{integrante.apodo} - {integrante.pokemon.nombre}
-									</option>
-								{/each}
-							</select>
-						</div>
-
-						<div>
-							<label for="movimiento" class="block text-sm font-medium text-slate-700 mb-2">
-								Movimiento <span class="text-red-500">*</span>
-							</label>
-							<div id="movimiento">
-								<Typeahead
-									endpoint="{API_URL}/movimientos/"
-									placeholder="Buscar movimiento..."
-									on:select={(event) => {
-										movimientoSeleccionado = event.detail.result.id;
-										mensajeError = '';
-									}}
+								Agregar integrante
+							</button>
+						</form>
+					{/if}
+				{:else if panelActivo === 'movimiento'}
+					<h2>Cargar movimiento</h2>
+					<p>Elegi un integrante y sumale un movimiento clave.</p>
+					{#if data.equipo.integrantes.length === 0}
+						<div class="manage-empty">Sin integrantes en el equipo</div>
+					{:else}
+						<form
+							action="?/agregar_movimiento"
+							method="POST"
+							class="form-stack"
+							onsubmit={manejarEnvioAgregarMovimiento}
+						>
+							<input type="hidden" name="id_equipo" value={data.equipo.id} />
+							<input type="hidden" name="id_movimiento" bind:value={movimientoSeleccionado} />
+							<div>
+								<label for="integrante-movimiento">Integrante</label>
+								<select
+									id="integrante-movimiento"
+									name="id_integrante"
+									bind:value={integranteParaMovimiento}
+									required
+									class="ui-select"
+								>
+									<option value="">Selecciona un integrante</option>
+									{#each data.equipo.integrantes as integrante}
+										<option value={integrante.id}>
+											{integrante.apodo} - {integrante.pokemon.nombre}
+										</option>
+									{/each}
+								</select>
+							</div>
+							<div>
+								<label for="movimiento">Movimiento</label>
+								<div id="movimiento">
+									<Typeahead
+										endpoint={`${API_URL}/movimientos/`}
+										placeholder="Buscar movimiento..."
+										on:select={(event) => {
+											movimientoSeleccionado = event.detail.result.id;
+											mensajeError = '';
+										}}
+									/>
+								</div>
+							</div>
+							<button
+								type="submit"
+								disabled={!integranteParaMovimiento || !movimientoSeleccionado}
+								class="ui-button primary"
+							>
+								Agregar movimiento
+							</button>
+						</form>
+					{/if}
+				{:else}
+					<h2>Editar integrante</h2>
+					<p>Si queres cambiar el apodo, hacelo aca.</p>
+					{#if data.equipo.integrantes.length === 0}
+						<div class="manage-empty">Sin integrantes en el equipo</div>
+					{:else}
+						<form
+							action="?/editar_integrante"
+							method="POST"
+							class="form-stack"
+							onsubmit={manejarEnvioEditarIntegrante}
+						>
+							<input type="hidden" name="id_equipo" value={data.equipo.id} />
+							<div>
+								<label for="integrante-editar">Integrante</label>
+								<select
+									id="integrante-editar"
+									name="id_integrante"
+									bind:value={integranteParaEditar}
+									required
+									class="ui-select"
+								>
+									<option value="">Selecciona un integrante</option>
+									{#each data.equipo.integrantes as integrante}
+										<option value={integrante.id}>
+											{integrante.apodo} - {integrante.pokemon.nombre}
+										</option>
+									{/each}
+								</select>
+							</div>
+							<div>
+								<label for="nuevo-apodo-editar">Nuevo apodo</label>
+								<input
+									id="nuevo-apodo-editar"
+									type="text"
+									name="apodo"
+									bind:value={nuevoApodo}
+									required
+									maxlength="50"
+									class="ui-input"
+									placeholder="Ej: El jefe"
 								/>
 							</div>
-						</div>
-
-						<button
-							type="submit"
-							disabled={!integranteParaMovimiento || !movimientoSeleccionado}
-							class="w-full bg-green-600 hover:bg-green-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-md transition-colors text-sm"
-						>
-							Agregar Movimiento
-						</button>
-					</form>
-				{/if}
-			</section>
-
-			<!-- 3. Formulario: Editar integrante -->
-			<section class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-				<h2 class="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-					<span
-						class="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center text-sm mr-3"
-						>3</span
-					>
-					Editar Integrante
-				</h2>
-
-				{#if data.equipo.integrantes.length === 0}
-					<div class="bg-gray-50 border border-gray-200 text-gray-600 px-3 py-2 rounded-md text-sm">
-						Sin integrantes en el equipo
-					</div>
-				{:else}
-					<form
-						action="?/editar_integrante"
-						method="POST"
-						class="space-y-4"
-						onsubmit={manejarEnvioEditarIntegrante}
-					>
-						<!-- CAMPO OCULTO PARA ID DEL EQUIPO -->
-						<input type="hidden" name="id_equipo" value={data.equipo.id} />
-						<div>
-							<label for="integrante-editar" class="block text-sm font-medium text-slate-700 mb-2">
-								Integrante <span class="text-red-500">*</span>
-							</label>
-							<select
-								id="integrante-editar"
-								name="id_integrante"
-								bind:value={integranteParaEditar}
-								required
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm h-10"
+							<button
+								type="submit"
+								disabled={!integranteParaEditar || !nuevoApodo}
+								class="ui-button primary"
 							>
-								<option value="">Selecciona un integrante</option>
-								{#each data.equipo.integrantes as integrante}
-									<option value={integrante.id}>
-										{integrante.apodo} - {integrante.pokemon.nombre}
-									</option>
-								{/each}
-							</select>
-						</div>
-
-						<div>
-							<label for="nuevo-apodo-editar" class="block text-sm font-medium text-slate-700 mb-2">
-								Nuevo apodo <span class="text-red-500">*</span>
-							</label>
-							<input
-								id="nuevo-apodo-editar"
-								type="text"
-								name="apodo"
-								bind:value={nuevoApodo}
-								required
-								maxlength="50"
-								class="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm h-10"
-								placeholder="Nuevo apodo"
-							/>
-						</div>
-
-						<button
-							type="submit"
-							disabled={!integranteParaEditar || !nuevoApodo}
-							class="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-medium py-2 px-3 rounded-md transition-colors text-sm"
-						>
-							Editar Integrante
-						</button>
-					</form>
+								Editar integrante
+							</button>
+						</form>
+					{/if}
 				{/if}
-			</section>
-		</div>
+			</div>
+		</section>
 	</div>
 </div>

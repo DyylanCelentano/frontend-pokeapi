@@ -8,32 +8,22 @@
 	let errorMessage = $state('');
 	
 	async function buscarPokemonAleatorio() {
-		showLoading('Buscando un Pokémon salvaje...');
+		showLoading('Buscando un Pokemon random...');
 		errorMessage = '';
 		
 		try {
 			const randomId = Math.floor(Math.random() * 150) + 1;
-			console.log('Buscando Pokémon ID:', randomId);
-			console.log('API_URL:', API_URL);
-			
 			const url = `${API_URL}/pokemon/${randomId}`;
-			console.log('URL completa:', url);
-			
 			const response = await fetch(url);
-			console.log('Response status:', response.status);
-			
 			if (response.ok) {
 				const data = await response.json();
-				console.log('Datos recibidos correctamente:', data.nombre);
 				pokemonData = data;
 			} else {
 				const errorText = await response.text();
-				console.error('Error response:', errorText);
-				errorMessage = `Error al cargar el Pokémon: ${response.status} - ${errorText}`;
+				errorMessage = `Error al cargar el Pokemon: ${response.status} - ${errorText}`;
 			}
 		} catch (err) {
-			console.error('Error catch:', err);
-			errorMessage = `Error de conexión: ${err.message}. Verifica tu conexión a internet y que la API esté disponible.`;
+			errorMessage = `Error de conexion: ${err.message}. Revisa tu conexion a internet y la API.`;
 		} finally {
 			hideLoading();
 		}
@@ -41,21 +31,21 @@
 	
 	function verDetalles() {
 		if (pokemonData) {
-			showLoading('Cargando información detallada del Pokémon...');
+			showLoading('Cargando ficha del Pokemon...');
 			goto(`/pokemones/${pokemonData.id}`);
 		}
 	}
 	
 	function getStatColor(statName) {
 		const colors = {
-			'hp': 'bg-red-500',
-			'attack': 'bg-orange-500',
-			'defense': 'bg-yellow-500',
-			'special-attack': 'bg-blue-500',
-			'special-defense': 'bg-green-500',
-			'speed': 'bg-purple-500'
+			'hp': '#e76f51',
+			'attack': '#f4a261',
+			'defense': '#e9c46a',
+			'special-attack': '#48b4a8',
+			'special-defense': '#8ab17d',
+			'speed': '#5268f2'
 		};
-		return colors[statName] || 'bg-gray-500';
+		return colors[statName] || '#9aa1ad';
 	}
 	
 	function getStatValue(statName) {
@@ -76,77 +66,57 @@
 	}
 </script>
 
-<div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-200">
-	<h3 class="text-xl font-bold text-slate-800 mb-4">🎲 Pokémon Aleatorio</h3>
-	
-	<button 
-		onclick={buscarPokemonAleatorio}
-		class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 mb-4"
-	>
-		¡Encontrar Pokémon Salvaje!
-	</button>
-	
+<section class="random-encounter ui-card">
+	<div class="random-encounter__header">
+		<div>
+			<p class="ui-kicker">Zona random</p>
+			<h3>Pokemon al azar</h3>
+			<p class="ui-subtitle">Te tiramos uno sorpresa para inspirar tu equipo.</p>
+		</div>
+		<button onclick={buscarPokemonAleatorio} class="ui-button primary">
+			Tirar uno
+		</button>
+	</div>
+
 	{#if errorMessage}
-		<div class="mt-4 p-4 bg-red-100 border border-red-300 rounded-lg text-red-800">
-			<div class="flex items-center gap-2">
-				<span>⚠️</span>
-				<span>{errorMessage}</span>
-			</div>
+		<div class="random-encounter__alert">
+			<span>{errorMessage}</span>
 		</div>
 	{/if}
-	
+
 	{#if pokemonData}
-		<div class="mt-4 p-4 sm:p-6 bg-white rounded-lg border shadow-sm">
-			<div class="flex flex-col lg:flex-row gap-4 sm:gap-6">
-				<!-- Imagen y información básica -->
-				<div class="flex-shrink-0">
-					<img 
-						src={pokemonData.imagen} 
-						alt={pokemonData.nombre}
-						class="w-24 h-24 sm:w-32 sm:h-32 mx-auto"
-					/>
-					<h4 class="font-bold text-xl sm:text-2xl capitalize text-center mt-2">{pokemonData.nombre}</h4>
-					<div class="flex flex-wrap gap-2 mt-2 justify-center">
+		<div class="random-encounter__content">
+			<div class="random-encounter__profile">
+				<img src={pokemonData.imagen} alt={pokemonData.nombre} />
+				<div>
+					<h4>{pokemonData.nombre}</h4>
+					<div class="random-encounter__types">
 						{#each pokemonData.tipos as tipo}
 							<EtiquetaTipo tipo={tipo.nombre} tamaño="sm" />
 						{/each}
 					</div>
 				</div>
-				
-				<!-- Estadísticas -->
-				<div class="flex-1">
-					<h5 class="font-semibold text-lg mb-3 text-slate-800">Estadísticas</h5>
-					<div class="space-y-3">
-						{#each ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'] as statName}
-							{@const value = getStatValue(statName)}
-							{@const percentage = Math.min((value / 150) * 100, 100)}
-							<div>
-								<div class="flex justify-between text-sm mb-1">
-									<span class="capitalize font-medium">{statName.replace('-', ' ')}</span>
-									<span class="text-slate-600">{value}</span>
-								</div>
-								<div class="w-full bg-gray-200 rounded-full h-2">
-									<div 
-										class="h-2 rounded-full transition-all duration-500 {getStatColor(statName)}"
-										style="width: {percentage}%"
-									></div>
-								</div>
-							</div>
-						{/each}
-					</div>
-				</div>
 			</div>
-			
-			<!-- Botón para ver más detalles -->
-			<div class="mt-6 text-center">
-				<button 
-					onclick={verDetalles}
-					class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors duration-200 inline-flex items-center gap-2"
-				>
-					<span>👁️</span>
-					Ver Detalles Completos
+
+			<div class="random-encounter__stats">
+				{#each ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'] as statName}
+					{@const value = getStatValue(statName)}
+					{@const percentage = Math.min((value / 150) * 100, 100)}
+					<div class="ui-stat">
+						<span class="stat-name">{statName.replace('-', ' ')}</span>
+						<span class="stat-value">{value}</span>
+						<div class="ui-bar">
+							<span style={`width:${percentage}%; background:${getStatColor(statName)}`}></span>
+						</div>
+					</div>
+				{/each}
+			</div>
+
+			<div class="random-encounter__cta">
+				<button onclick={verDetalles} class="ui-button ghost">
+					Ver ficha completa
 				</button>
 			</div>
 		</div>
 	{/if}
-</div>
+</section>

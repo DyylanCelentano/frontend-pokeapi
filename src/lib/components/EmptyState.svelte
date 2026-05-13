@@ -4,7 +4,7 @@
 	export let message = "";
 	export let searchTerm = "";
 	export let hasFilters = false;
-	export let icon = "🔍";
+	export let icon = "";
 	export let suggestions = [];
 
 	const typeNames = {
@@ -13,65 +13,47 @@
 		equipos: { singular: "equipo", plural: "equipos" }
 	};
 
-	$: displayTitle = title || (searchTerm ? `No se encontraron ${typeNames[type]?.plural || type}` : `Sin ${typeNames[type]?.plural || type}`);
+	$: displayTitle = title || (searchTerm ? `No encontramos ${typeNames[type]?.plural || type}` : `Todavia sin ${typeNames[type]?.plural || type}`);
 	$: displayMessage = message || (searchTerm ? 
-		`No se encontraron ${typeNames[type]?.plural || type} que coincidan con "${searchTerm}"` : 
-		`Parece que no hay ${typeNames[type]?.plural || type} para mostrar en este momento.`
+		`No hay ${typeNames[type]?.plural || type} que coincidan con "${searchTerm}"` : 
+		`Por ahora no hay ${typeNames[type]?.plural || type} para mostrar.`
 	);
 </script>
 
-<div class="text-center py-16 px-6 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300">
-	<!-- Icono -->
-	<div class="text-6xl mb-4 opacity-50">
-		{icon}
-	</div>
+<div class="empty-state">
+	{#if icon}
+		<div class="empty-state__icon">{icon}</div>
+	{/if}
+	<div class="empty-state__mark" aria-hidden="true"></div>
 
-	<!-- Título -->
-	<h3 class="text-2xl font-semibold text-slate-800 mb-3">
-		{displayTitle}
-	</h3>
+	<h3 class="empty-state__title">{displayTitle}</h3>
+	<p class="empty-state__message">{displayMessage}</p>
 
-	<!-- Mensaje -->
-	<p class="text-slate-600 mb-6 max-w-md mx-auto">
-		{displayMessage}
-	</p>
-
-	<!-- Sugerencias -->
 	{#if suggestions.length > 0}
-		<div class="mb-8">
-			<h4 class="text-lg font-medium text-slate-700 mb-3">Sugerencias:</h4>
-			<ul class="text-left text-slate-600 space-y-2 max-w-md mx-auto">
+		<div class="empty-state__suggestions">
+			<h4>Para probar</h4>
+			<ul>
 				{#each suggestions as suggestion}
-					<li class="flex items-start gap-2">
-						<span class="text-blue-500 font-bold">•</span>
-						<span>{suggestion}</span>
-					</li>
+					<li>{suggestion}</li>
 				{/each}
 			</ul>
 		</div>
 	{/if}
 
-	<!-- Botones de acción -->
-	<div class="flex flex-col sm:flex-row gap-3 justify-center">
+	<div class="empty-state__actions">
 		{#if searchTerm || hasFilters}
 			<button
 				onclick={() => {
 					document.querySelector('form')?.reset();
 					window.location.href = window.location.pathname;
 				}}
-				class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+				class="ui-button primary"
 			>
-				<span>🔄</span>
 				Limpiar filtros
 			</button>
 		{/if}
-		
-		<button
-			onclick={() => window.location.reload()}
-			class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium rounded-lg transition-colors"
-		>
-			<span>↻</span>
-			Actualizar página
+		<button onclick={() => window.location.reload()} class="ui-button ghost">
+			Recargar pagina
 		</button>
 	</div>
 </div>

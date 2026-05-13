@@ -11,7 +11,6 @@ export async function load({ params }) {
                 error(404, {
                     message: `No se encontró el movimiento con ID ${params.id}`,
                     title: "Movimiento no encontrado",
-                    icon: "⚔️",
                     suggestions: [
                         "Verifica que el ID del movimiento sea correcto",
                         "Prueba buscando por nombre en la lista de movimientos",
@@ -23,8 +22,7 @@ export async function load({ params }) {
             }
             error(response.status, {
                 message: "Hubo un problema al cargar la información del movimiento",
-                title: "Error del servidor",
-                icon: "⚠️"
+                title: "Error del servidor"
             });
         }
 
@@ -34,8 +32,7 @@ export async function load({ params }) {
         if (!movimiento || !movimiento.nombre) {
             error(500, {
                 message: "Los datos del movimiento están incompletos",
-                title: "Error en los datos",
-                icon: "🔧"
+                title: "Error en los datos"
             });
         }
 
@@ -50,7 +47,6 @@ export async function load({ params }) {
         error(503, {
             message: "No se pudo conectar con el servidor. Inténtalo más tarde.",
             title: "Error de conexión",
-            icon: "🌐",
             suggestions: [
                 "Verifica tu conexión a internet",
                 "El servidor podría estar temporalmente no disponible"

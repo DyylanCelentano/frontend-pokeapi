@@ -10,7 +10,6 @@
 		title: error?.title || "¡Ups! Algo salió mal",
 		message: error?.message || "No pudimos procesar tu solicitud",
 		statusCode: status || 500,
-		icon: error?.icon || "❌",
 		suggestions: error?.suggestions || [],
 		backUrl: "/",
 		backText: "Volver al inicio"
@@ -18,14 +17,13 @@
 </script>
 
 <svelte:head>
-	<title>Error {errorData.statusCode} - PokéAPI</title>
+	<title>IntroDex | Error {errorData.statusCode}</title>
 </svelte:head>
 
 <ErrorPage 
 	title={errorData.title}
 	message={errorData.message}
 	statusCode={errorData.statusCode}
-	icon={errorData.icon}
 	suggestions={errorData.suggestions}
 	backUrl={errorData.backUrl}
 	backText={errorData.backText}

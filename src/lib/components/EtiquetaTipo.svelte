@@ -10,9 +10,12 @@
 		fuego: 'var(--tipo-fuego)',
 		agua: 'var(--tipo-agua)',
 		planta: 'var(--tipo-planta)',
+		electrico: 'var(--tipo-electrico)',
 		eléctrico: 'var(--tipo-electrico)',
+		psiquico: 'var(--tipo-psiquico)',
 		psíquico: 'var(--tipo-psiquico)',
 		hielo: 'var(--tipo-hielo)',
+		dragon: 'var(--tipo-dragon)',
 		dragón: 'var(--tipo-dragon)',
 		siniestro: 'var(--tipo-siniestro)',
 		hada: 'var(--tipo-hada)',
@@ -33,16 +36,14 @@
 	);
 
 	const clasesTamaño = {
-		sm: 'px-2 py-0.5 text-xs',
-		md: 'px-3 py-1 text-sm',
-		lg: 'px-4 py-1.5 text-base'
+		sm: 'type-chip sm',
+		md: 'type-chip md',
+		lg: 'type-chip lg'
 	};
 </script>
 
 <span
-	class="inline-flex items-center justify-center rounded-lg font-semibold capitalize tracking-wide {clasesTamaño[
-		tamaño
-	]}"
+	class="type-chip {clasesTamaño[tamaño]}"
 	style="background-color: {colorFondo}; color: {colorTexto};"
 >
 	{tipo}

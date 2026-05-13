@@ -1,7 +1,10 @@
 import { env } from '$env/dynamic/public';
 
-// Configuración de API con fallback para desarrollo
-export const API_URL = env.PUBLIC_VITE_API_URL
+const DEFAULT_API_URL = 'https://backendpokeapi.up.railway.app/api';
+const rawApiUrl = env.PUBLIC_VITE_API_URL || DEFAULT_API_URL;
+
+// Normalizar para evitar dobles barras al construir endpoints.
+export const API_URL = rawApiUrl.endsWith('/') ? rawApiUrl.slice(0, -1) : rawApiUrl;
 export const TIPOS = {
 	normal: 1,
 	lucha: 2,

@@ -6,14 +6,12 @@ export const loadingMessage = writable('Cargando...');
 
 // Función para mostrar loading
 export function showLoading(mensaje = 'Cargando...') {
-	console.log('Mostrando loading:', mensaje); // Debug
 	loadingMessage.set(mensaje);
 	isLoading.set(true);
 }
 
 // Función para ocultar loading
 export function hideLoading() {
-	console.log('Ocultando loading'); // Debug
 	isLoading.set(false);
 }
 

@@ -7,7 +7,6 @@
 	import { NOMBRES_TIPOS } from '$lib/constantes';
 	import { hideLoading, showLoading } from '$lib/stores/loading.js';
 	import { onMount } from 'svelte';
-	import './page.css';
 
 	let { data } = $props();
 	let terminoBusqueda = $state('');
@@ -37,7 +36,7 @@
 	};
 	
 	const buscarPokemon = (e) => {
-		showLoading('Buscando Pokémon...');
+		showLoading('Buscando Pokemon...');
 		
 		// Timeout de seguridad: ocultar loading después de 10 segundos máximo
 		clearTimeout(loadingTimeout);
@@ -51,112 +50,110 @@
 </script>
 
 <svelte:head>
-	<title>Pokémon - PokéAPI</title>
+	<title>IntroDex | Pokemon</title>
 </svelte:head>
 
-<div class="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 text-lg py-8">
-	<main class="flex-1">
-		<div class="max-w-7xl mx-auto px-4">
-			<a href="../" class="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md font-medium transition-colors mb-8 shadow">◄ Menu Principal</a>
-			<!-- Encabezado de la página -->
-			<div class="text-center mb-8">
-				<h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 mb-4 drop-shadow-lg">Explorar Pokémon</h1>
-				<p class="text-lg text-slate-600 max-w-2xl mx-auto">
-					Descubre todos los Pokémon disponibles. Usa los filtros para encontrar exactamente lo que buscas.
-				</p>
-			</div>
-			<!-- Sección de filtros -->
-			<div class="bg-white/90 rounded-2xl shadow-lg border border-slate-200 p-8 mb-10">
-				<div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-					<h2 class="text-2xl font-bold text-blue-700">Filtros</h2>
-					<div class="flex gap-2">
-						<button
-							class="bg-gradient-to-r from-blue-600 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white px-6 py-2 rounded-lg font-bold transition-all shadow-md"
-							form="form-filtrar-pokemon"
-							type="submit">Buscar</button>
-						<button
-							class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md font-medium transition-colors text-sm cursor-pointer"
-							onclick={limpiarFiltros}
-						>
-							Limpiar filtros
-						</button>
+<div class="page-shell">
+	<main class="app-main">
+		<section class="ui-section">
+			<div class="ui-container">
+				<a href="../" class="back-link">Volver al inicio</a>
+				<div class="page-header">
+					<div>
+						<p class="ui-kicker">Pokedex</p>
+						<h1>Pokemon al detalle</h1>
+						<p class="ui-subtitle">
+							Filtra por nombre o tipo y encontralos al toque.
+						</p>
 					</div>
 				</div>
-				<form action="?/filter" id="form-filtrar-pokemon" onsubmit={buscarPokemon}>
-					<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-						<div class="flex flex-col gap-2">
-							<label for="nombre" class="text-sm font-medium text-slate-700">Buscar por nombre</label>
-							<input
-								id="search"
-								name="nombre"
-								bind:value={terminoBusqueda}
-								type="text"
-								placeholder="Ej: Pikachu, Charizard..."
-								class="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 text-sm bg-slate-50"
-							/>
+
+				<div class="filter-panel ui-surface">
+					<div class="filter-header">
+						<div>
+							<h2>Filtros finos</h2>
+							<p>Combina criterios y achica la lista.</p>
 						</div>
-						<div class="flex flex-col gap-2">
-							<label for="tipo" class="text-sm font-medium text-slate-700">Filtrar por tipo</label>
-							<select
-								id="type"
-								name="tipo"
-								bind:value={tipoSeleccionado}
-								class="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-sm bg-slate-50"
+						<div class="filter-actions">
+							<button
+								class="ui-button primary"
+								form="form-filtrar-pokemon"
+								type="submit"
 							>
-								<option value="">Todos los tipos</option>
-								{#each NOMBRES_TIPOS as tipo}
-									<option value={tipo.toLowerCase()}>{tipo}</option>
-								{/each}
-							</select>
+								Buscar
+							</button>
+							<button class="ui-button ghost" onclick={limpiarFiltros}>
+								Limpiar filtros
+							</button>
 						</div>
 					</div>
-				</form>
-				<!-- Filtros activos -->
-				{#if terminoBusqueda || tipoSeleccionado}
-					<div class="flex items-center gap-2 flex-wrap pt-4 border-t border-slate-200">
-						<span class="text-sm font-medium text-slate-600">Filtros activos:</span>
-						{#if terminoBusqueda}
-							<span class="inline-flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-md text-sm border border-slate-200">
-								Búsqueda: "{terminoBusqueda}"
-								<button
-									onclick={() => (terminoBusqueda = '')}
-									class="text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
-								>×</button>
-							</span>
-						{/if}
-						{#if tipoSeleccionado}
-							<span class="inline-flex items-center gap-2 bg-slate-100 px-3 py-1 rounded-md text-sm border border-slate-200">
-								<EtiquetaTipo tipo={tipoSeleccionado} tamaño="sm" />
-								<button
-									onclick={() => (tipoSeleccionado = '')}
-									class="text-slate-500 hover:text-slate-700 hover:bg-slate-200 rounded-full w-4 h-4 flex items-center justify-center transition-colors"
-								>×</button>
-							</span>
-						{/if}
-					</div>
-				{/if}
-			</div>
-			<!-- Sección de resultados -->
-			<div class="mb-8">
-				<div class="flex justify-between items-center mb-6 flex-col md:flex-row gap-4">
-					<span class="text-xl font-semibold text-slate-800">Resultados ({data.pokemones.length})</span>
+					<form action="?/filter" id="form-filtrar-pokemon" onsubmit={buscarPokemon}>
+						<div class="filter-grid">
+							<div>
+								<label for="nombre">Buscar por nombre</label>
+								<input
+									id="nombre"
+									name="nombre"
+									bind:value={terminoBusqueda}
+									type="text"
+									placeholder="Ej: Pikachu, Charizard..."
+									class="ui-input"
+								/>
+							</div>
+							<div>
+								<label for="tipo">Filtrar por tipo</label>
+								<select
+									id="tipo"
+									name="tipo"
+									bind:value={tipoSeleccionado}
+									class="ui-select"
+								>
+									<option value="">Todos los tipos</option>
+									{#each NOMBRES_TIPOS as tipo}
+										<option value={tipo.toLowerCase()}>{tipo}</option>
+									{/each}
+								</select>
+							</div>
+						</div>
+					</form>
+					{#if terminoBusqueda || tipoSeleccionado}
+						<div class="filter-chips">
+							<span class="ui-pill">Filtros activos</span>
+							{#if terminoBusqueda}
+								<span class="ui-chip">
+									Busqueda: "{terminoBusqueda}"
+									<button onclick={() => (terminoBusqueda = '')} class="chip-button">×</button>
+								</span>
+							{/if}
+							{#if tipoSeleccionado}
+								<span class="ui-chip">
+									<EtiquetaTipo tipo={tipoSeleccionado} tamaño="sm" />
+									<button onclick={() => (tipoSeleccionado = '')} class="chip-button">×</button>
+								</span>
+							{/if}
+						</div>
+					{/if}
+				</div>
+
+				<div class="results-header">
+					<span class="results-count">Resultados ({data.pokemones.length})</span>
 					<Pagination currentPage={data.currentPage} hasMore={data.hasMore} pageSize={data.pageSize} />
 				</div>
+
 				{#if data.pokemones.length > 0}
-					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+					<div class="ui-grid ui-grid-4">
 						{#each data.pokemones as pokemon}
 							<TarjetaPokemon {pokemon} />
 						{/each}
 					</div>
 				{:else}
-					<EmptyState 
+					<EmptyState
 						type="pokémon"
 						searchTerm={terminoBusqueda || ($page.url.searchParams.get('nombre') || '')}
 						hasFilters={!!tipoSeleccionado || !!terminoBusqueda}
-						icon="🐾"
 					/>
 				{/if}
 			</div>
-		</div>
+		</section>
 	</main>
 </div>

@@ -65,7 +65,7 @@
 
 <div class="typeahead-container">
 	<input
-		class="typeahead-input"
+		class="typeahead-input ui-input"
 		type="text"
 		bind:value={query}
 		oninput={onInput}
@@ -97,20 +97,12 @@
 	}
 
 	.typeahead-input {
-		width: 100%;
-		height: 2.5rem; /* h-10 equivale a 40px */
-		padding: 0.5rem 0.75rem; /* px-3 py-2 */
-		border: 1px solid #cbd5e1; /* border-slate-300 */
-		border-radius: 0.375rem; /* rounded-md */
-		font-size: 0.875rem; /* text-sm */
-		line-height: 1.25rem;
-		transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		height: 44px;
+		padding: 0 0.9rem;
 	}
 
 	.typeahead-input:focus {
-		outline: none;
-		border-color: #3b82f6; /* focus:border-blue-500 */
-		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); /* focus:ring-2 focus:ring-blue-500 */
+		box-shadow: 0 0 0 4px rgba(31, 138, 138, 0.12);
 	}
 
 	.dropdown {
@@ -118,27 +110,25 @@
 		width: 100%;
 		max-height: 200px;
 		overflow-y: auto;
-		border: 1px solid #cbd5e1; /* border-slate-300 */
-		border-top: none;
-		border-radius: 0 0 0.375rem 0.375rem; /* rounded-b-md */
-		background: white;
+		border: 1px solid rgba(21, 23, 27, 0.14);
+		border-radius: 0 0 14px 14px;
+		background: rgba(255, 255, 255, 0.96);
 		z-index: 1000;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+		box-shadow: 0 20px 40px rgba(19, 20, 23, 0.12);
 	}
 
 	.dropdown-item {
-		padding: 0.5rem 0.75rem; /* px-3 py-2 */
+		padding: 0.65rem 0.9rem;
 		cursor: pointer;
 		transition: background-color 0.15s ease-in-out;
-		font-size: 0.875rem; /* text-sm */
-		line-height: 1.25rem;
+		font-size: 0.875rem;
 	}
 
 	.dropdown-item:hover {
-		background-color: #f1f5f9; /* hover:bg-slate-100 */
+		background-color: rgba(31, 138, 138, 0.08);
 	}
 
 	.dropdown-item:active {
-		background-color: #e2e8f0; /* active:bg-slate-200 */
+		background-color: rgba(31, 138, 138, 0.16);
 	}
 </style>

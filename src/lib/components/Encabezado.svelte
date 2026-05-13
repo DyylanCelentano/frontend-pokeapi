@@ -1,13 +1,16 @@
 <script>
+  import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import { buscarPokemon } from '$lib/helpers/busqueda.js';
+  import { showLoading } from '$lib/stores/loading.js';
   
   let menuCelular = $state(false);
   let textoBusqueda = $state('');
+  let theme = $state('light');
   
   const navegacion = [
     { nombre: 'Inicio', enlace: '/' },
-    { nombre: 'Pokémon', enlace: '/pokemones' },
+    { nombre: 'Pokemon', enlace: '/pokemones' },
     { nombre: 'Movimientos', enlace: '/movimientos' },
     { nombre: 'Equipos', enlace: '/equipos' }
   ];
@@ -24,95 +27,136 @@
       realizarBusqueda();
     }
   }
+
+  function aplicarTheme(nuevoTheme) {
+    theme = nuevoTheme;
+    document.documentElement.dataset.theme = nuevoTheme;
+    localStorage.setItem('introdex-theme', nuevoTheme);
+  }
+
+  function toggleTheme() {
+    aplicarTheme(theme === 'dark' ? 'light' : 'dark');
+  }
+
+  function navegarConLoading(mensaje) {
+    showLoading(mensaje);
+    menuCelular = false;
+  }
+
+  onMount(() => {
+    const saved = localStorage.getItem('introdex-theme');
+    if (saved) {
+      aplicarTheme(saved);
+      return;
+    }
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    aplicarTheme(prefersDark ? 'dark' : 'light');
+  });
 </script>
 
-<header class="bg-white shadow-md border-b border-slate-200 sticky top-0 z-50 backdrop-blur-sm">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <nav class="flex items-center justify-between h-16">
+<header class="app-header">
+  <div class="ui-container">
+    <nav class="header-nav">
+      <a href="/" class="brand">
+        <span class="brand-mark">ID</span>
+        <span class="brand-name">IntroDex</span>
+      </a>
 
-      <div class="flex items-center"> <!-- Logo y nombre -->
-        <a href="/" class="flex items-center gap-2 text-xl font-bold text-slate-800 hover:text-blue-600 transition-colors">
-
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1333.34 1333.07" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" class="w-6 h-6"><defs><style>.fil0{fill:#fff;fill-rule:nonzero}</style></defs><g id="Layer_x0020_1"><g id="_1473324886368"><path id="Down" class="fil0" d="M666.54 885.24c-105.31 0-193.15-74.56-214.01-173.61H102.19c24.77 288.04 266.41 514.04 560.7 514.04 294.3 0 536.2-226 560.7-514.04H880.55c-20.85 99.32-108.7 173.61-214.01 173.61z"/><path id="Shadow_Down" d="M791.66 1211.07c233.56-54.74 411.08-254.68 431.94-499.44h-138.16c-13.81 222.09-130.34 410.3-293.78 499.44z" fill="#dfdfdf" fill-rule="nonzero"/><path id="Center" class="fil0" d="M795.57 666.54c-.26 0-.26 0 0 0-.26-15.9-3.13-31.02-8.34-45.09-18.25-49.01-65.43-83.68-120.69-83.68-55.26 0-102.44 34.93-120.69 83.68a129.312 129.312 0 00-8.08 45.09h.26c0 15.9 2.87 31.02 8.08 45.09 18.25 49.01 65.43 83.68 120.69 83.68 55.26 0 102.44-34.93 120.69-83.68 5.21-13.82 8.08-29.19 8.08-45.09z"/><path id="Up" d="M666.8 448.09c105.31 0 193.15 74.56 214.01 173.61h350.34c-24.76-288.3-266.41-514.3-560.96-514.3-294.56 0-535.94 226-560.7 514.04h343.3c20.85-99.06 108.7-173.35 214.01-173.35z" fill="#ff1c1c" fill-rule="nonzero"/><path id="Shadow_Up" d="M1085.44 621.44h145.45C1209.52 372.5 1026 169.7 786.45 119.38c166.31 87.84 284.91 277.87 298.99 502.06z" fill="#df1818" fill-rule="nonzero"/><path id="Line" d="M670.19 107.4c294.56 0 536.2 226 560.7 514.04H880.55c-20.85-99.06-108.7-173.61-214.02-173.61-105.31 0-193.15 74.56-214.01 173.61H109.48c24.76-288.05 266.41-514.04 560.7-514.04zm117.04 514.04c5.21 14.07 8.08 29.19 8.08 45.09h.26c0 15.9-2.87 31.02-8.08 45.09-18.24 49.01-65.43 83.68-120.69 83.68-55.26 0-102.44-34.93-120.69-83.68a129.312 129.312 0 01-8.08-45.09h-.26c0-15.9 2.87-31.02 8.08-45.09 18.24-49.01 65.43-83.68 120.69-83.68 55.26 0 102.44 34.93 120.69 83.68zm-124.34 604.49c-294.56 0-536.2-226-560.7-514.04h350.34c20.85 99.05 108.7 173.61 214.01 173.61 105.31 0 193.16-74.56 214.02-173.61h343.3c-24.76 287.78-266.41 514.04-560.96 514.04zM666.54 0C298.47 0 0 298.46 0 666.54c0 368.07 298.47 666.54 666.54 666.54 368.07 0 666.8-298.21 666.8-666.54S1034.87 0 666.54 0z" fill="#000" fill-rule="nonzero"/></g></g></svg>
-          
-          <span class="text-blue-600">IntroDex</span>
-
-        </a>
-
-      </div> <!-- Logo y nombre -->
-      
-      <!-- Navegación computadoras -->
-      <div class="hidden md:flex items-center gap-8">
+      <div class="nav-links">
         {#each navegacion as item}
-          <a 
-            href={item.enlace} 
-            class="text-slate-600 hover:text-slate-900 font-medium transition-colors px-3 py-2 rounded-md"
-            class:text-blue-600={$page.url.pathname === item.enlace}
-            class:font-semibold={$page.url.pathname === item.enlace}
-            class:bg-slate-100={$page.url.pathname === item.enlace}
+          <a
+            href={item.enlace}
+            class="nav-link"
+            class:active={$page.url.pathname === item.enlace}
+            onclick={() => navegarConLoading(`Abriendo ${item.nombre.toLowerCase()}...`)}
           >
             {item.nombre}
           </a>
         {/each}
       </div>
-        <!-- Barra de búsqueda -->
-      <div class="hidden sm:flex items-center bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 min-w-[250px]">
-        <input 
-          type="text" 
-          placeholder="Buscar Pokémon..." 
-          class="bg-transparent outline-none text-sm text-slate-700 placeholder:text-slate-500 flex-1 px-2"
+
+      <div class="search-bar">
+        <input
+          type="text"
+          placeholder="Buscar Pokemon por nombre"
+          class="search-input"
           bind:value={textoBusqueda}
           onkeydown={manejarEnter}
         />
-        <button 
-          class="bg-blue-600 hover:bg-blue-700 text-white border-none rounded-md p-2 transition-colors"
-          onclick={realizarBusqueda}
-        >
-          🔍
+        <button class="search-button" onclick={realizarBusqueda} aria-label="Buscar">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M11 4a7 7 0 105.29 12.1l3.3 3.3a1 1 0 001.42-1.4l-3.3-3.3A7 7 0 0011 4zm0 2a5 5 0 110 10 5 5 0 010-10z"
+              fill="currentColor"
+            />
+          </svg>
         </button>
       </div>
-      
-      <!-- Boton menu celular -->
-      <button 
-        class="md:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors text-xl"
+
+      <button class="theme-toggle" onclick={toggleTheme} aria-label="Cambiar tema">
+        {#if theme === 'dark'}
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 16a5 5 0 100-10 5 5 0 000 10zm0 4a1 1 0 011-1v-2a1 1 0 10-2 0v2a1 1 0 001 1zM4.22 5.64a1 1 0 011.41-1.41l1.42 1.41A1 1 0 115.64 7.05L4.22 5.64zM16.95 18.36a1 1 0 011.41 1.41l-1.41 1.42a1 1 0 11-1.41-1.41l1.41-1.42zM2 13a1 1 0 110-2h2a1 1 0 110 2H2zm18 0a1 1 0 110-2h2a1 1 0 110 2h-2zM5.64 18.36a1 1 0 10-1.41 1.41l1.42 1.42a1 1 0 001.41-1.41l-1.42-1.42zm13.73-12.72a1 1 0 10-1.41-1.41l-1.42 1.41a1 1 0 101.41 1.41l1.42-1.41z" fill="currentColor" />
+          </svg>
+        {:else}
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" fill="currentColor" />
+          </svg>
+        {/if}
+      </button>
+
+      <button
+        class="menu-toggle"
         onclick={() => menuCelular = !menuCelular}
+        aria-label="Abrir menu"
+        aria-expanded={menuCelular}
       >
-        ☰
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
       </button>
     </nav>
-    
-    <!-- Navegación en celulares -->
+
     {#if menuCelular}
-      <div class="md:hidden border-t border-slate-200 bg-white">
+      <div class="mobile-panel">
         {#each navegacion as item}
-          <a 
+          <a
             href={item.enlace}
-            class="block px-4 py-3 text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors border-b border-slate-100 last:border-b-0"
-            class:text-blue-600={$page.url.pathname === item.enlace}
-            class:bg-blue-50={$page.url.pathname === item.enlace}
-            onclick={() => menuCelular = false}
+            class="mobile-link"
+            class:active={$page.url.pathname === item.enlace}
+            onclick={() => navegarConLoading(`Abriendo ${item.nombre.toLowerCase()}...`)}
           >
             {item.nombre}
           </a>
         {/each}
-          <!-- Barra de búsqueda en celular -->
-        <div class="p-4 border-t border-slate-200">
-          <div class="flex items-center bg-slate-100 rounded-lg px-3 py-2">
-            <input 
-              type="text" 
-              placeholder="Buscar Pokémon..." 
-              class="bg-transparent outline-none text-sm text-slate-700 placeholder:text-slate-500 flex-1"
-              bind:value={textoBusqueda}
-              onkeydown={manejarEnter}
-            />
-            <button 
-              class="text-slate-500 hover:text-slate-700 ml-2"
-              onclick={realizarBusqueda}
-            >
-              🔍
-            </button>
-          </div>
+        <div class="mobile-search">
+          <input
+            type="text"
+            placeholder="Buscar Pokemon"
+            class="search-input"
+            bind:value={textoBusqueda}
+            onkeydown={manejarEnter}
+          />
+          <button class="search-button" onclick={realizarBusqueda} aria-label="Buscar">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M11 4a7 7 0 105.29 12.1l3.3 3.3a1 1 0 001.42-1.4l-3.3-3.3A7 7 0 0011 4zm0 2a5 5 0 110 10 5 5 0 010-10z"
+                fill="currentColor"
+              />
+            </svg>
+          </button>
         </div>
+        <button class="theme-toggle mobile" onclick={toggleTheme} aria-label="Cambiar tema">
+          {#if theme === 'dark'}
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2a1 1 0 011 1v2a1 1 0 11-2 0V3a1 1 0 011-1zm0 16a5 5 0 100-10 5 5 0 000 10zm0 4a1 1 0 011-1v-2a1 1 0 10-2 0v2a1 1 0 001 1zM4.22 5.64a1 1 0 011.41-1.41l1.42 1.41A1 1 0 115.64 7.05L4.22 5.64zM16.95 18.36a1 1 0 011.41 1.41l-1.41 1.42a1 1 0 11-1.41-1.41l1.41-1.42zM2 13a1 1 0 110-2h2a1 1 0 110 2H2zm18 0a1 1 0 110-2h2a1 1 0 110 2h-2zM5.64 18.36a1 1 0 10-1.41 1.41l1.42 1.42a1 1 0 001.41-1.41l-1.42-1.42zm13.73-12.72a1 1 0 10-1.41-1.41l-1.42 1.41a1 1 0 101.41 1.41l1.42-1.41z" fill="currentColor" />
+            </svg>
+          {:else}
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" fill="currentColor" />
+            </svg>
+          {/if}
+        </button>
       </div>
     {/if}
   </div>

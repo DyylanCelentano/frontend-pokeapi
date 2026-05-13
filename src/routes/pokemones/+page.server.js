@@ -18,7 +18,7 @@ export async function load({ url }) {
 	const response = await fetch(apiUrl);
 
 	if (!response.ok) {
-		error(`Error ${response.status}, ${response.statusText}`);
+		error(response.status, response.statusText);
 	}
 
 	const pokemones = await response.json();

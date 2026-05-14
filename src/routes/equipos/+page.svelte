@@ -30,8 +30,8 @@
 				<div class="page-header">
 					<div>
 						<p class="ui-kicker">Equipos</p>
-						<h1>Equipos en serio</h1>
-						<p class="ui-subtitle">Crea, ordena y ajusta tu plantel sin vueltas.</p>
+						<h1>Equipos</h1>
+						<p class="ui-subtitle">Crea el equipo que te ayude a ganar cualquier batalla.</p>
 					</div>
 				</div>
 

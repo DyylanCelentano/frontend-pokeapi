@@ -3,67 +3,54 @@
 	import { API_URL } from '$lib/constantes/index.js';
 	import { hideLoading, showLoading } from '$lib/stores/loading.js';
 	import EtiquetaTipo from './EtiquetaTipo.svelte';
-	
+
 	let pokemonData = $state(null);
 	let errorMessage = $state('');
-	
+	let cargando = $state(false);
+
 	async function buscarPokemonAleatorio() {
 		showLoading('Buscando un Pokemon random...');
 		errorMessage = '';
-		
+		cargando = true;
+
 		try {
-			const randomId = Math.floor(Math.random() * 150) + 1;
-			const url = `${API_URL}/pokemon/${randomId}`;
-			const response = await fetch(url);
+			const randomId = Math.floor(Math.random() * 898) + 1;
+			const response = await fetch(`${API_URL}/pokemon/${randomId}`);
 			if (response.ok) {
-				const data = await response.json();
-				pokemonData = data;
+				pokemonData = await response.json();
 			} else {
-				const errorText = await response.text();
-				errorMessage = `Error al cargar el Pokemon: ${response.status} - ${errorText}`;
+				errorMessage = `Error al cargar el Pokemon (${response.status})`;
 			}
 		} catch (err) {
-			errorMessage = `Error de conexion: ${err.message}. Revisa tu conexion a internet y la API.`;
+			errorMessage = `Error de conexión: ${err.message}`;
 		} finally {
+			cargando = false;
 			hideLoading();
 		}
 	}
-	
+
 	function verDetalles() {
 		if (pokemonData) {
 			showLoading('Cargando ficha del Pokemon...');
 			goto(`/pokemones/${pokemonData.id}`);
 		}
 	}
-	
-	function getStatColor(statName) {
-		const colors = {
-			'hp': '#e76f51',
-			'attack': '#f4a261',
-			'defense': '#e9c46a',
-			'special-attack': '#48b4a8',
-			'special-defense': '#8ab17d',
-			'speed': '#5268f2'
-		};
-		return colors[statName] || '#9aa1ad';
+
+	function getStatGradient(value) {
+		if (value >= 100) return 'linear-gradient(90deg, #0ea5e9, #06b6d4)';
+		if (value >= 75) return 'linear-gradient(90deg, #10b981, #0ea5e9)';
+		if (value >= 50) return 'linear-gradient(90deg, #f59e0b, #f97316)';
+		return 'linear-gradient(90deg, #ef4444, #f97316)';
 	}
-	
-	function getStatValue(statName) {
-		if (!pokemonData?.estadisticas) return 0;
-		
-		// Mapear nombres de estadísticas del frontend al backend
-		const statMapping = {
-			'hp': 'puntos_de_golpe',
-			'attack': 'ataque',
-			'defense': 'defensa',
-			'special-attack': 'ataque_especial',
-			'special-defense': 'defensa_especial',
-			'speed': 'velocidad'
-		};
-		
-		const backendStatName = statMapping[statName] || statName;
-		return pokemonData.estadisticas[backendStatName] || 0;
-	}
+
+	const statLabels = {
+		puntos_de_golpe: 'HP',
+		ataque: 'Ataque',
+		defensa: 'Defensa',
+		ataque_especial: 'Atq Esp',
+		defensa_especial: 'Def Esp',
+		velocidad: 'Velocidad'
+	};
 </script>
 
 <section class="random-encounter ui-card">
@@ -71,23 +58,27 @@
 		<div>
 			<p class="ui-kicker">Zona random</p>
 			<h3>Pokemon al azar</h3>
-			<p class="ui-subtitle">Te tiramos uno sorpresa para inspirar tu equipo.</p>
+			<p class="ui-subtitle">Dejá que el destino elija un pokemon por vos. Quizás te soprenda.</p>
 		</div>
-		<button onclick={buscarPokemonAleatorio} class="ui-button primary">
-			Tirar uno
+		<button onclick={buscarPokemonAleatorio} class="ui-button primary" disabled={cargando}>
+			{cargando ? 'Buscando...' : 'Random'}
 		</button>
 	</div>
 
 	{#if errorMessage}
 		<div class="random-encounter__alert">
-			<span>{errorMessage}</span>
+			{errorMessage}
 		</div>
 	{/if}
 
 	{#if pokemonData}
 		<div class="random-encounter__content">
 			<div class="random-encounter__profile">
-				<img src={pokemonData.imagen} alt={pokemonData.nombre} />
+				<img
+					src={pokemonData.imagen}
+					alt={pokemonData.nombre}
+					style="filter: drop-shadow(0 8px 20px rgba(14,165,233,0.4))"
+				/>
 				<div>
 					<h4>{pokemonData.nombre}</h4>
 					<div class="random-encounter__types">
@@ -98,19 +89,21 @@
 				</div>
 			</div>
 
-			<div class="random-encounter__stats">
-				{#each ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'] as statName}
-					{@const value = getStatValue(statName)}
-					{@const percentage = Math.min((value / 150) * 100, 100)}
-					<div class="ui-stat">
-						<span class="stat-name">{statName.replace('-', ' ')}</span>
-						<span class="stat-value">{value}</span>
-						<div class="ui-bar">
-							<span style={`width:${percentage}%; background:${getStatColor(statName)}`}></span>
+			{#if pokemonData.estadisticas}
+				<div class="random-encounter__stats">
+					{#each Object.entries(statLabels) as [key, label]}
+						{@const value = pokemonData.estadisticas[key] ?? 0}
+						{@const pct = Math.min((value / 150) * 100, 100)}
+						<div class="ui-stat">
+							<span class="stat-name">{label}</span>
+							<span class="stat-value">{value}</span>
+							<div class="ui-bar">
+								<span style="width:{pct}%; background:{getStatGradient(value)};"></span>
+							</div>
 						</div>
-					</div>
-				{/each}
-			</div>
+					{/each}
+				</div>
+			{/if}
 
 			<div class="random-encounter__cta">
 				<button onclick={verDetalles} class="ui-button ghost">

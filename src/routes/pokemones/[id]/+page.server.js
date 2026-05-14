@@ -9,17 +9,17 @@ export async function load({ params }) {
 		if (!response.ok) {
 			if (response.status === 404) {
 				error(404, {
-					message: `No se encontró el Pokémon con ID ${params.id}`,
-					title: "Pokémon no encontrado",
+					message: `No se encontró el Pokemon con ID ${params.id}`,
+					title: "Pokemon no encontrado",
 					suggestions: [
-						"Verifica que el ID del Pokémon sea correcto",
+						"Verifica que el ID del Pokemon sea correcto",
 						"Los IDs válidos van del 1 al 1010",
-						"Prueba buscando por nombre en la lista de Pokémones"
+						"Prueba buscando por nombre en la lista de Pokemones"
 					]
 				});
 			}
 			error(response.status, {
-				message: "Hubo un problema al cargar la información del Pokémon",
+				message: "Hubo un problema al cargar la información del Pokemon",
 				title: "Error del servidor"
 			});
 		}
@@ -29,7 +29,7 @@ export async function load({ params }) {
 		// Validar que tenga datos mínimos
 		if (!pokemon || !pokemon.nombre) {
 			error(500, {
-				message: "Los datos del Pokémon están incompletos",
+				message: "Los datos del Pokemon están incompletos",
 				title: "Error en los datos"
 			});
 		}

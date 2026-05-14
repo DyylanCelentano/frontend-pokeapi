@@ -82,7 +82,7 @@
 				<img src={imagen} alt={`Imagen del pokemon ${nombre}`} />
 			</div>
 			<div class="detail-hero__info">
-				<p class="ui-kicker">Perfil tactico</p>
+				<p class="ui-kicker">Ficha completa</p>
 				<h1>{nombre}</h1>
 				<div class="detail-hero__types">
 					{#each tipos as tipo}

@@ -45,7 +45,7 @@
       <div class="footer-grid">
         <div>
           <h4>IntroDex</h4>
-          <p>Proyecto integrador orientado a datos de combate y exploracion.</p>
+          <p>Proyecto integrador académico.</p>
           <p>Universidad de Buenos Aires.</p>
         </div>
         <div>
@@ -58,7 +58,7 @@
         </div>
         <div>
           <h5>Recursos</h5>
-          <p>Datos provistos por la API academica del proyecto.</p>
+          <p>Datos provistos por API armada <br>con Python + FastAPI + SQLite.</p>
         </div>
       </div>
     </div>

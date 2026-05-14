@@ -1,5 +1,5 @@
 <script>
-	export let type = "pokémon"; // pokémon, movimientos, equipos
+	export let type = "pokemon"; // pokemon, movimientos, equipos
 	export let title = "";
 	export let message = "";
 	export let searchTerm = "";
@@ -8,7 +8,7 @@
 	export let suggestions = [];
 
 	const typeNames = {
-		pokémon: { singular: "Pokémon", plural: "Pokémon" },
+		pokemon: { singular: "Pokemon", plural: "Pokemon" },
 		movimientos: { singular: "movimiento", plural: "movimientos" },
 		equipos: { singular: "equipo", plural: "equipos" }
 	};

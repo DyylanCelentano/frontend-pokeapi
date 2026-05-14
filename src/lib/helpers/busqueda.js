@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation';
 import { showLoading } from '$lib/stores/loading.js';
 
-// Función para buscar pokémones y navegar con los resultados
+// Función para buscar pokemones y navegar con los resultados
 export function buscarPokemon(nombre) {
     if (!nombre || nombre.trim() === '') return;
     

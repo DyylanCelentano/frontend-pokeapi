@@ -1,11 +1,11 @@
 # IntroDex - Frontend
 
-IntroDex es una aplicación web desarrollada como proyecto integrador académico y colaborativo, orientada a la gestión y exploración de información del universo Pokémon. Este frontend permite a los usuarios interactuar de manera intuitiva con los datos provistos por un backend propio, facilitando la consulta, búsqueda y administración de pokémones, movimientos y equipos.
+IntroDex es una aplicación web desarrollada como proyecto integrador académico y colaborativo, orientada a la gestión y exploración de información del universo Pokemon. Este frontend permite a los usuarios interactuar de manera intuitiva con los datos provistos por un backend propio, facilitando la consulta, búsqueda y administración de pokemones, movimientos y equipos.
 
 ## ¿Qué es este proyecto?
 
-Este frontend es la interfaz visual y de usuario de un sistema completo de gestión de datos Pokémon. Permite a cualquier usuario:
-- Buscar y explorar pokémones, movimientos y equipos.
+Este frontend es la interfaz visual y de usuario de un sistema completo de gestión de datos Pokemon. Permite a cualquier usuario:
+- Buscar y explorar pokemones, movimientos y equipos.
 - Consultar información detallada de cada entidad.
 - Crear y administrar equipos personalizados.
 - Navegar de forma sencilla y atractiva por las distintas secciones del sistema.
@@ -34,7 +34,7 @@ Este proyecto fue desarrollado en equipo, fomentando la colaboración, la revisi
 
 ## ¿A quién está dirigido?
 
-IntroDex está pensado tanto para usuarios fanáticos de Pokémon como para evaluadores académicos y reclutadores técnicos. El objetivo es demostrar habilidades en:
+IntroDex está pensado tanto para usuarios fanáticos de Pokemon como para evaluadores académicos y reclutadores técnicos. El objetivo es demostrar habilidades en:
 - Desarrollo frontend moderno
 - Consumo de APIs REST
 - Trabajo en equipo y metodologías ágiles

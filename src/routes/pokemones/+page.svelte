@@ -60,19 +60,15 @@
 				<a href="../" class="back-link">Volver al inicio</a>
 				<div class="page-header">
 					<div>
-						<p class="ui-kicker">Pokedex</p>
-						<h1>Pokemon al detalle</h1>
-						<p class="ui-subtitle">
-							Filtra por nombre o tipo y encontralos al toque.
-						</p>
+						<p class="ui-kicker">IntroDex</p>
+						<h1>Pokemones</h1>
 					</div>
 				</div>
 
 				<div class="filter-panel ui-surface">
 					<div class="filter-header">
 						<div>
-							<h2>Filtros finos</h2>
-							<p>Combina criterios y achica la lista.</p>
+							<h2>Filtros</h2>
 						</div>
 						<div class="filter-actions">
 							<button
@@ -148,7 +144,7 @@
 					</div>
 				{:else}
 					<EmptyState
-						type="pokémon"
+						type="pokemon"
 						searchTerm={terminoBusqueda || ($page.url.searchParams.get('nombre') || '')}
 						hasFilters={!!tipoSeleccionado || !!terminoBusqueda}
 					/>

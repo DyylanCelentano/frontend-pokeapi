@@ -54,7 +54,7 @@
       <div class="search-bar">
         <input
           type="text"
-          placeholder="Buscar Pokémon..."
+          placeholder="Buscar Pokemon..."
           class="search-input"
           bind:value={textoBusqueda}
           onkeydown={manejarEnter}
@@ -96,7 +96,7 @@
         <div class="mobile-search">
           <input
             type="text"
-            placeholder="Buscar Pokémon..."
+            placeholder="Buscar Pokemon..."
             class="search-input"
             bind:value={textoBusqueda}
             onkeydown={manejarEnter}

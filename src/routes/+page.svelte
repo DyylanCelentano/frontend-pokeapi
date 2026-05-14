@@ -102,7 +102,7 @@
 </script>
 
 <svelte:head>
-	<title>IntroDex — Pokémon</title>
+	<title>IntroDex — Pokemon</title>
 </svelte:head>
 
 <div class="home-page">
@@ -119,20 +119,20 @@
 			<div class="home-hero-v2__copy">
 				<div class="home-hero-v2__kicker">
 					<span class="home-hero-v2__kicker-dot"></span>
-					<span>La enciclopedia definitiva</span>
+					<span>Proyecto Full Stack</span>
 				</div>
 
 				<h1 class="home-hero-v2__title">
-					La data posta del <em>mundo</em>
-					<span class="home-hero-v2__gradient">Pokémon</span>
+					IntroDex <br> <em>mundo</em>
+					<span class="home-hero-v2__gradient">Pokemon</span>
 				</h1>
 
 				<p class="home-hero-v2__subtitle">
-					Fichas claras, movimientos al detalle y equipos que se arman al toque. Todo centralizado.
+					Información clara sobre el mundo Pokemon. Movimientos, evoluciones, equipos. Todo centralizado.
 				</p>
 
 				<div class="home-hero-v2__actions">
-					<a href="/pokemones" class="ui-button primary">Explorar Pokémon</a>
+					<a href="/pokemones" class="ui-button primary">Explorar Pokemon</a>
 					<a href="/equipos" class="ui-button ghost">Armar equipo</a>
 				</div>
 			</div>

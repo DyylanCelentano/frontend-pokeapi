@@ -57,11 +57,11 @@
 	<div class="random-encounter__header">
 		<div>
 			<p class="ui-kicker">Zona random</p>
-			<h3>Pokémon al azar</h3>
-			<p class="ui-subtitle">Tirá uno sorpresa para inspirar tu equipo.</p>
+			<h3>Pokemon al azar</h3>
+			<p class="ui-subtitle">Dejá que el destino elija un pokemon por vos. Quizás te soprenda.</p>
 		</div>
 		<button onclick={buscarPokemonAleatorio} class="ui-button primary" disabled={cargando}>
-			{cargando ? 'Buscando...' : 'Tirar uno'}
+			{cargando ? 'Buscando...' : 'Random'}
 		</button>
 	</div>
 

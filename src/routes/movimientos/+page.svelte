@@ -59,16 +59,14 @@
 				<div class="page-header">
 					<div>
 						<p class="ui-kicker">Movimientos</p>
-						<h1>Movimientos al detalle</h1>
-						<p class="ui-subtitle">Filtra y compara potencia, precision y PP.</p>
+						<h1>Movimientos y habilidades</h1>
 					</div>
 				</div>
 
 				<div class="filter-panel ui-surface">
 					<div class="filter-header">
 						<div>
-							<h2>Filtros a mano</h2>
-							<p>Filtra por tipo y afina la busqueda.</p>
+							<h2>Filtros</h2>
 						</div>
 						<div class="filter-actions">
 							<button type="submit" form="form-filtros-movimientos" class="ui-button primary">
